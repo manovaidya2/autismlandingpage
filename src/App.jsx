@@ -150,7 +150,7 @@ function Hero() {
                   </div>
                 </div>
                 <div className="text-xs text-muted-foreground mt-0.5">
-                  <span className="font-semibold text-deep-green">1,000+ Reviews</span> · Live
+                  <span className="font-semibold text-deep-green">Rating</span> · Live
                 </div>
               </div>
             </a>
@@ -169,7 +169,7 @@ function Hero() {
             <div className="absolute inset-0 bg-gradient-to-t from-deep-green/40 via-transparent to-transparent" />
             <div className="absolute bottom-6 left-6 right-6 text-primary-foreground">
               <div className="text-m  uppercase tracking-[0.25em] text-gold mb-2">Profession</div>
-              <div className="font-display text-2xl">Brain–Gut–Behaviour Specialist</div>
+              <div className="font-display text-2xl">Neuro-Ayurveda Specialist</div>
             </div>
           </div>
           <div className="absolute -top-6 -left-6 w-24 h-24 border-t-2 border-l-2 border-gold rounded-tl-2xl" />
@@ -326,58 +326,58 @@ function Phases() {
       points: ["Learning improves", "Behaviour stabilizes", "Engagement becomes meaningful"],
     },
   ];
-  return (
-    <section id="plan" className="py-28">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <div className="text-center max-w-3xl mx-auto">
-          <SectionLabel>The 180-Day System</SectionLabel>
-          <h2 className="mt-6 text-3xl md:text-4xl lg:text-5xl text-deep-green">
-            A Structured 180-Day Neuro-Development Plan
-          </h2>
-          <p className="mt-6 text-muted-foreground text-lg">
-            Autism improvement follows a process — not guesswork.
-          </p>
-        </div>
+  // return (
+    // <section id="plan" className="py-28">
+    //   <div className="max-w-7xl mx-auto px-6 lg:px-12">
+    //     <div className="text-center max-w-3xl mx-auto">
+    //       <SectionLabel>The 180-Day System</SectionLabel>
+    //       <h2 className="mt-6 text-3xl md:text-4xl lg:text-5xl text-deep-green">
+    //         A Structured 180-Day Neuro-Development Plan
+    //       </h2>
+    //       <p className="mt-6 text-muted-foreground text-lg">
+    //         Autism improvement follows a process — not guesswork.
+    //       </p>
+    //     </div>
 
-        <div className="mt-20 relative">
-          <div className="hidden lg:block absolute top-12 left-[8%] right-[8%] h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
-          <div className="grid lg:grid-cols-3 gap-10 lg:gap-8">
-            {phases.map((p) => (
-              <div key={p.n} className="relative">
-                <div className="hidden lg:flex absolute -top-1 left-1/2 -translate-x-1/2 h-6 w-6 rounded-full bg-background items-center justify-center">
-                  <div className="h-3 w-3 rounded-full bg-gold ring-4 ring-gold/20" />
-                </div>
-                <div className="mt-12 p-10 rounded-2xl border border-border bg-card hover:shadow-luxury transition-all h-full">
-                  <div className="flex items-baseline justify-between">
-                    <div className="text-xs uppercase tracking-[0.25em] text-gold font-medium">{p.n}</div>
-                    <div className="text-sm text-muted-foreground">{p.d}</div>
-                  </div>
-                  <h3 className="mt-4 text-2xl text-deep-green">{p.t}</h3>
-                  <div className="gold-divider my-6" />
-                  <ul className="space-y-3">
-                    {p.points.map((pt) => (
-                      <li key={pt} className="flex items-start gap-3 text-deep-green/90">
-                        <div className="mt-2 h-1.5 w-1.5 rounded-full bg-gold flex-shrink-0" />
-                        {pt}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+    //     <div className="mt-20 relative">
+    //       <div className="hidden lg:block absolute top-12 left-[8%] right-[8%] h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
+    //       <div className="grid lg:grid-cols-3 gap-10 lg:gap-8">
+    //         {phases.map((p) => (
+    //           <div key={p.n} className="relative">
+    //             <div className="hidden lg:flex absolute -top-1 left-1/2 -translate-x-1/2 h-6 w-6 rounded-full bg-background items-center justify-center">
+    //               <div className="h-3 w-3 rounded-full bg-gold ring-4 ring-gold/20" />
+    //             </div>
+    //             <div className="mt-12 p-10 rounded-2xl border border-border bg-card hover:shadow-luxury transition-all h-full">
+    //               <div className="flex items-baseline justify-between">
+    //                 <div className="text-xs uppercase tracking-[0.25em] text-gold font-medium">{p.n}</div>
+    //                 <div className="text-sm text-muted-foreground">{p.d}</div>
+    //               </div>
+    //               <h3 className="mt-4 text-2xl text-deep-green">{p.t}</h3>
+    //               <div className="gold-divider my-6" />
+    //               <ul className="space-y-3">
+    //                 {p.points.map((pt) => (
+    //                   <li key={pt} className="flex items-start gap-3 text-deep-green/90">
+    //                     <div className="mt-2 h-1.5 w-1.5 rounded-full bg-gold flex-shrink-0" />
+    //                     {pt}
+    //                   </li>
+    //                 ))}
+    //               </ul>
+    //             </div>
+    //           </div>
+    //         ))}
+    //       </div>
+    //     </div>
 
-        <div className="mt-20 text-center max-w-3xl mx-auto">
-          <p className="font-display text-2xl md:text-3xl text-deep-green italic leading-snug">
-            This is not trial-based treatment.
-            <br />
-            <span className="text-gradient-gold not-italic font-medium">This is structured developmental progression.</span>
-          </p>
-        </div>
-      </div>
-    </section>
-  );
+    //     <div className="mt-20 text-center max-w-3xl mx-auto">
+    //       <p className="font-display text-2xl md:text-3xl text-deep-green italic leading-snug">
+    //         This is not trial-based treatment.
+    //         <br />
+    //         <span className="text-gradient-gold not-italic font-medium">This is structured developmental progression.</span>
+    //       </p>
+    //     </div>
+    //   </div>
+    // </section>
+  // );
 }
 
 function WhatYouGet() {
@@ -846,7 +846,7 @@ function GoogleReviews() {
                       ))}
                     </div>
                   </div>
-                  <div className="text-xs text-muted-foreground mt-0.5">Based on 2,347 reviews</div>
+                  <div className="text-xs text-muted-foreground mt-0.5">Based google ratings</div>
                 </div>
               </div>
               <div className="mt-5 space-y-1.5">
@@ -920,7 +920,7 @@ function GoogleReviews() {
             rel="noreferrer"
             className="inline-flex items-center gap-2 text-sm text-deep-green font-medium hover:text-gold transition"
           >
-            See all 2,347 reviews on Google →
+            See all <strong>4.9</strong> ratings on Google →
           </a>
         </div>
       </div>
@@ -932,7 +932,7 @@ function VideoTestimonials() {
   const [activeVideo, setActiveVideo] = useState(null);
   const videos = [
   {
-    id: "oWMqqacIIpQ",
+    id: "gYgPy11WNV8",
     name: "Sunita R.",
     role: "Mother of Aarav (5)",
     city: "Mumbai",
@@ -940,29 +940,46 @@ function VideoTestimonials() {
     quote: "He said 'Mumma' for the first time at Day 47.",
   },
   {
-    id: "rBOGwlYSfUY",
-    name: "Rajeev M.",
-    role: "Father of Vivaan (4)",
+    id: "ZRsjg5Onbqo",
+    name: "Ritika bansal",
+    role: "Mother of riyansh (4)",
     city: "Bengaluru",
     duration: "3:08",
     quote: "Manovaidya gave us back direction.",
   },
   {
-    id: "gYgPy11WNV8",
-    name: "Karan & Nidhi S.",
-    role: "Parents of Saanvi (6)",
+    id: "OQg0gMNgIdo",
+    name: "Sakshi Gupta",
+    role: "Mother of Ritik (3)",
     city: "Gurugram",
     duration: "4:22",
     quote: "The difference is real.",
   },
   {
-    id: "ZRsjg5Onbqo",
-    name: "Lakshmi V.",
-    role: "Mother of Diya (7)",
+    id: "b0OzBNn9F_s",
+    name: "Rachna Mehra",
+    role: "Mother of Vivan (7)",
     city: "Hyderabad",
     duration: "2:51",
     quote: "She's back in school.",
   },
+   {
+    id: "lqhpefWYP2E",
+    name: "Anurag",
+    role: "Father of Rishi (3)",
+    city: "Gurugram",
+    duration: "4:22",
+    quote: "The difference is real.",
+  },
+  {
+    id: "DP-crCP4rLo",
+    name: "Sonia Sharma",
+    role: "Mother of Athrav (5)",
+    city: "Hyderabad",
+    duration: "2:51",
+    quote: "She's back in school.",
+  },
+  
 ];
 
   return (
