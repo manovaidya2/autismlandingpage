@@ -99,6 +99,9 @@ function Nav() {
 }
 
 function Hero() {
+  const rating = 4.9;
+const fullStars = Math.floor(rating);
+const hasHalfStar = rating % 1 >= 0.5;
   return (
     <section className="relative pt-32 pb-24 lg:pt-40 lg:pb-32 overflow-hidden">
       <div
@@ -132,28 +135,58 @@ function Hero() {
             </div>
           </div>
 
-          <div className="mt-10 grid sm:grid-cols-2 gap-4 max-w-2xl">
+         <div className="mt-10 grid sm:grid-cols-2 gap-4 max-w-2xl">
             <a
               href="https://www.google.com/search?q=manovaidya+reviews"
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-4 p-4 rounded-xl bg-card border border-border hover:border-gold hover:shadow-soft transition-all"
+              className="group flex items-center gap-4 p-4 rounded-xl bg-white border hover:border-yellow-400 transition-all"
             >
-              <div className="h-11 w-11 rounded-full bg-cream flex items-center justify-center flex-shrink-0">
-                <svg viewBox="0 0 48 48" className="h-6 w-6"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3 0 5.8 1.1 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2c-2 1.4-4.5 2.4-7.2 2.4-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.1 5.6l6.2 5.2C41.8 35 44 29.9 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
-              </div>
-              <div className="flex-1 min-w-0">
+              <div className="flex-1">
+                
+                {/* Rating */}
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold text-deep-green">4.9</span>
+                  <span className="text-2xl font-bold text-green-800">
+                    {rating.toFixed(1)}
+                  </span>
+
                   <div className="flex">
-                    {[0,1,2,3,4].map(i => <Star key={i} className="h-3.5 w-3.5 fill-gold text-gold" />)}
+                    {[1, 2, 3, 4, 5].map((star) => {
+                      const isFull = star <= fullStars;
+                      const isHalf = star === fullStars + 1 && hasHalfStar;
+
+                      return (
+                        <span key={star} className="relative inline-flex h-4 w-4">
+                          
+                          {/* Empty star */}
+                          <Star className="h-4 w-4 text-gray-300" />
+
+                          {/* Filled part */}
+                          {(isFull || isHalf) && (
+                            <span
+                              className="absolute inset-0 overflow-hidden"
+                              style={{
+                                width: isFull ? "100%" : "50%",
+                              }}
+                            >
+                              <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                            </span>
+                          )}
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
-                <div className="text-xs text-muted-foreground mt-0.5">
-                  <span className="font-semibold text-deep-green">Rating</span> · Live
+
+                <div className="text-xs text-gray-500 mt-1">
+                  <span className="font-semibold text-green-800">Rating</span> · Live
                 </div>
+
               </div>
             </a>
+    
+
+      
             <LiveAppointments />
           </div>
 
@@ -761,6 +794,9 @@ function CaseStudies() {
 }
 
 function GoogleReviews() {
+  const rating = 4.9;
+const fullStars = Math.floor(rating);
+const hasHalfStar = rating % 1 >= 0.5;
   const reviews = [
     {
       name: "Anjali Krishnan",
@@ -838,14 +874,44 @@ function GoogleReviews() {
                 </svg>
                 <div>
                   <div className="text-xs text-muted-foreground">Manovaidya Clinic · Google</div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-semibold text-deep-green">4.9</span>
-                    <div className="flex items-center gap-0.5">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="h-4 w-4 fill-gold text-gold" />
-                      ))}
-                    </div>
-                  </div>
+             <div className="flex items-baseline gap-2">
+  <span className="text-3xl font-semibold text-deep-green">
+    {rating.toFixed(1)}
+  </span>
+
+  <div className="flex items-center gap-0.5">
+    {[1, 2, 3, 4, 5].map((star) => {
+      const isFull = star <= fullStars;
+      const isHalf = star === fullStars + 1 && hasHalfStar;
+
+      return (
+        <span key={star} className="relative inline-flex h-4 w-4">
+          
+          {/* Empty */}
+          <Star
+            className="h-4 w-4"
+            fill="none"
+            stroke="#d1d5db"
+          />
+
+          {/* Filled */}
+          {(isFull || isHalf) && (
+            <span
+              className="absolute left-0 top-0 h-4 overflow-hidden"
+              style={{ width: isFull ? "100%" : "50%" }}
+            >
+              <Star
+                className="h-4 w-4"
+                fill="#facc15"
+                stroke="#facc15"
+              />
+            </span>
+          )}
+        </span>
+      );
+    })}
+  </div>
+</div>
                   <div className="text-xs text-muted-foreground mt-0.5">Based google ratings</div>
                 </div>
               </div>
@@ -913,16 +979,52 @@ function GoogleReviews() {
           ))}
         </div>
 
-        <div className="mt-10 text-center">
-          <a
-            href="https://www.google.com/search?sca_esv=1432227f7e5641c8&sxsrf=ANbL-n5jc9_V8cjxenhv3bIt18hoxCCU4Q:1777896901430&si=AL3DRZEsmMGCryMMFSHJ3StBhOdZ2-6yYkXd_doETEE1OR-qOY1OS03QdtCHjAhtR5nco9pNVhH6a9PXVuYKL-QrmrIThEoQWEIqSCQHWuBtRpkOWuj3Zka_AkLy4RU_oEwjV0iT8v4T&q=Manovaidya+Reviews&sa=X&ved=2ahUKEwi48oaKzp-UAxXGS3ADHSpuBrsQ0bkNegQIQxAH&biw=1280&bih=585&dpr=1.5"
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-deep-green font-medium hover:text-gold transition"
+      <div className="mt-10 text-center">
+  <a
+    href="https://www.google.com/search?sca_esv=1432227f7e5641c8&sxsrf=ANbL-n5jc9_V8cjxenhv3bIt18hoxCCU4Q:1777896901430&si=AL3DRZEsmMGCryMMFSHJ3StBhOdZ2-6yYkXd_doETEE1OR-qOY1OS03QdtCHjAhtR5nco9pNVhH6a9PXVuYKL-QrmrIThEoQWEIqSCQHWuBtRpkOWuj3Zka_AkLy4RU_oEwjV0iT8v4T&q=Manovaidya+Reviews&sa=X&ved=2ahUKEwi48oaKzp-UAxXGS3ADHSpuBrsQ0bkNegQIQxAH&biw=1280&bih=585&dpr=1.5"
+    target="_blank"
+    rel="noreferrer"
+    className="inline-flex items-center gap-2 text-sm text-deep-green font-medium hover:text-gold transition"
+  >
+    See all <strong>{rating.toFixed(1)}</strong> ratings on Google →
+
+    {/* ⭐ Stars */}
+  <span className="flex items-center ml-2 gap-0.5">
+  {[1, 2, 3, 4, 5].map((star) => {
+    const isFull = star <= fullStars;
+    const isHalf = star === fullStars + 1 && hasHalfStar;
+
+    return (
+      <span
+        key={star}
+        className="relative inline-flex h-3.5 w-3.5"
+      >
+        {/* Empty Star */}
+        <Star
+          className="h-3.5 w-3.5"
+          fill="none"
+          stroke="#d1d5db"
+        />
+
+        {/* Filled Star */}
+        {(isFull || isHalf) && (
+          <span
+            className="absolute left-0 top-0 h-3.5 overflow-hidden"
+            style={{ width: isFull ? "100%" : "50%" }}
           >
-            See all <strong>4.9</strong> ratings on Google →
-          </a>
-        </div>
+            <Star
+              className="h-3.5 w-3.5"
+              fill="#facc15"
+              stroke="#facc15"
+            />
+          </span>
+        )}
+      </span>
+    );
+  })}
+</span>
+  </a>
+</div>
       </div>
     </section>
   );
