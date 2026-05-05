@@ -5,7 +5,7 @@ import {
 } from "lucide-react";
 
 // Import images (update paths as needed)
-import doctorImg from "./assets/doctor.jpeg";
+import doctorImg from "./assets/imghero.jpeg";
 import neuralBg from "./assets/neural-bg.jpg";
 import logoImg from "./assets/manovaidya-logo.png";
 import parent1 from "./assets/parent-1.jpg";
