@@ -194,7 +194,7 @@ function VSL() {
         <div className="mt-12 aspect-video rounded-2xl overflow-hidden shadow-luxury">
   <iframe
     className="w-full h-full"
-    src="https://www.youtube.com/embed/1w8h4anBmz4"
+    src="https://www.youtube.com/embed/ZpXSu4BIRiE"
     title="YouTube video player"
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
     allowFullScreen
