@@ -487,112 +487,212 @@ function Authority() {
 }
 
 function Testimonials() {
+
+  const overallRating = 4.9;
+  const fullStars = Math.floor(overallRating);
+  const hasHalfStar = overallRating % 1 >= 0.5;
+
   const items = [
-  {
-    q: "Apne child ke behaviour ko lekar hum kaafi time se worried the. Isi concern ke liye humne Dr. Ankush Garg se consultation liya. Unhone bahut calmly hamari saari baat suni aur simple tareeke se hume situation samjhayi. Unki guidance mein ab lagbhag 4 months se treatment chal raha hai, aur hume positive changes feel ho rahe hain. Thanks for bringing back balance in our life.",
-    name: "Pradeep Singh",
-    role: "Parent",
-    city: "India",
-    date: "Reviewed a month ago",
-    rating: 5,
-    verified: true,
-    tag: "Google Review",
-    image: pradeepImg,
-  },
-  {
-    q: "My 17 year old daughter was suffering from anxiety, mood swings and overthinking. As parents, hum samajh hi nahi pa rahe the ki problem kya hai. We tried many things at home and consulted doctors, but kuch khas benefit nahi hua. Manovaidya se treatment start karne ke baad kaafi positive changes dekhe. Ab wo calm feel karti hai, baatein share karti hai aur stress ko better handle kar pa rahi hai. Thanks to Dr. Ankush Garg and his team.",
-    name: "Monu Singh",
-    role: "Parent",
-    city: "India",
-    date: "Reviewed 2 months ago",
-    rating: 5,
-    verified: true,
-    tag: "Google Review",
-    image: "https://ui-avatars.com/api/?name=Monu+Singh"
-  },
-  {
-    q: "Meri beti bahut hyperactive thi. Humne kaafi jagah consult kiya, jahan hume bataya gaya ki usse ADHD hai. Treatment start karwaya lekin zyada improvement nazar nahi aa rahi thi. Ek din Facebook par Manovaidya ka ad dekha aur wahan se treatment start kiya. Dheere-dheere meri beti mein kaafi achha improvement dikhne laga. Ab wo shant baith kar activities karti hai aur uska behaviour kaafi balanced ho gaya hai. Dr. Ankush Garg aur Manovaidya team ka dil se thank you.",
-    name: "Jatin Kumar Sanjowa",
-    role: "Parent",
-    city: "India",
-    date: "Reviewed 3 months ago",
-    rating: 5,
-    verified: true,
-    tag: "Google Review",
-    image: jatinImg,
-  }
-];
-  
-  const initials = (n) => n.split(" ").slice(0, 2).map((x) => x[0]).join("");
-  
+    {
+      q: "Apne child ke behaviour ko lekar hum kaafi time se worried the. Isi concern ke liye humne Dr. Ankush Garg se consultation liya. Unhone bahut calmly hamari saari baat suni aur simple tareeke se hume situation samjhayi. Unki guidance mein ab lagbhag 4 months se treatment chal raha hai, aur hume positive changes feel ho rahe hain. Thanks for bringing back balance in our life.",
+      name: "Pradeep Singh",
+      role: "Parent",
+      city: "India",
+      date: "Reviewed a month ago",
+      rating: 5,
+      verified: true,
+      tag: "Google Review",
+      image: pradeepImg,
+    },
+    {
+      q: "My 17 year old daughter was suffering from anxiety, mood swings and overthinking. As parents, hum samajh hi nahi pa rahe the ki problem kya hai. We tried many things at home and consulted doctors, but kuch khas benefit nahi hua. Manovaidya se treatment start karne ke baad kaafi positive changes dekhe. Ab wo calm feel karti hai, baatein share karti hai aur stress ko better handle kar pa rahi hai. Thanks to Dr. Ankush Garg and his team.",
+      name: "Monu Singh",
+      role: "Parent",
+      city: "India",
+      date: "Reviewed 2 months ago",
+      rating: 5,
+      verified: true,
+      tag: "Google Review",
+      image: "https://ui-avatars.com/api/?name=Monu+Singh"
+    },
+    {
+      q: "Meri beti bahut hyperactive thi. Humne kaafi jagah consult kiya, jahan hume bataya gaya ki usse ADHD hai. Treatment start karwaya lekin zyada improvement nazar nahi aa rahi thi. Ek din Facebook par Manovaidya ka ad dekha aur wahan se treatment start kiya. Dheere-dheere meri beti mein kaafi achha improvement dikhne laga. Ab wo shant baith kar activities karti hai aur uska behaviour kaafi balanced ho gaya hai. Dr. Ankush Garg aur Manovaidya team ka dil se thank you.",
+      name: "Jatin Kumar Sanjowa",
+      role: "Parent",
+      city: "India",
+      date: "Reviewed 3 months ago",
+      rating: 5,
+      verified: true,
+      tag: "Google Review",
+      image: jatinImg,
+    }
+  ];
+
   return (
     <section className="py-28 bg-cream relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 relative">
+
+        {/* TOP */}
         <div className="text-center max-w-2xl mx-auto">
-          <SectionLabel>Verified Parent Stories</SectionLabel>
+          <SectionLabel>
+            Verified Parent Stories
+          </SectionLabel>
+
           <h2 className="mt-6 text-3xl md:text-4xl lg:text-5xl text-deep-green leading-tight">
-            Real families. <span className="italic text-gold">Real words.</span>
+            Real families.{" "}
+            <span className="italic text-gold">
+              Real words.
+            </span>
           </h2>
+
+          {/* GOOGLE RATING */}
           <div className="mt-6 inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-card border border-border shadow-soft">
-            <div className="flex items-center gap-1">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="h-4 w-4 fill-gold text-gold" />
-              ))}
+
+            {/* Dynamic Stars */}
+            <div className="flex items-center gap-0.5">
+
+              {[1, 2, 3, 4, 5].map((star) => {
+
+                const isFull = star <= fullStars;
+                const isHalf = star === fullStars + 1 && hasHalfStar;
+
+                return (
+                  <span
+                    key={star}
+                    className="relative inline-flex h-4 w-4"
+                  >
+
+                    {/* Empty Star */}
+                    <Star
+                      className="h-4 w-4"
+                      fill="none"
+                      stroke="#d1d5db"
+                    />
+
+                    {/* Filled Star */}
+                    {(isFull || isHalf) && (
+                      <span
+                        className="absolute left-0 top-0 h-4 overflow-hidden"
+                        style={{
+                          width: isFull ? "100%" : "50%"
+                        }}
+                      >
+                        <Star
+                          className="h-4 w-4"
+                          fill="#facc15"
+                          stroke="#facc15"
+                        />
+                      </span>
+                    )}
+
+                  </span>
+                );
+              })}
+
             </div>
-            <span className="text-sm font-semibold text-deep-green">4.9</span>
-            <span className="text-sm text-muted-foreground">· 2,300+ Google Reviews</span>
+
+            {/* Rating */}
+            <span className="text-sm font-semibold text-deep-green">
+              {overallRating}
+            </span>
+
+            <span className="text-sm text-muted-foreground">
+              · Ratings
+            </span>
+
           </div>
         </div>
 
+        {/* TESTIMONIALS */}
         <div className="mt-14 grid md:grid-cols-3 gap-6">
+
           {items.map((t) => (
+
             <div
               key={t.name}
               className="group relative p-7 rounded-2xl bg-card border border-border shadow-soft hover:shadow-luxury transition-all duration-500 flex flex-col"
             >
+
+              {/* TOP */}
               <div className="flex items-center justify-between">
+
                 <div className="flex items-center gap-3">
+
                   <img
-  src={t.image}
-  alt={t.name}
-  className="h-12 w-12 rounded-full object-cover shadow-soft"
-/>
+                    src={t.image}
+                    alt={t.name}
+                    className="h-12 w-12 rounded-full object-cover shadow-soft"
+                  />
+
                   <div>
-                    <div className="font-semibold text-deep-green text-sm leading-tight">{t.name}</div>
-                    <div className="text-xs text-muted-foreground">{t.role}</div>
+                    <div className="font-semibold text-deep-green text-sm leading-tight">
+                      {t.name}
+                    </div>
+
+                    <div className="text-xs text-muted-foreground">
+                      {t.role}
+                    </div>
                   </div>
+
                 </div>
+
                 {t.verified && (
                   <div className="flex items-center gap-1 text-[10px] uppercase tracking-wider text-deep-green/70">
                     <ShieldCheck className="h-3.5 w-3.5 text-gold" />
                     <span>Verified</span>
                   </div>
                 )}
+
               </div>
 
+              {/* REVIEW STARS */}
               <div className="mt-5 flex items-center gap-2">
+
                 <div className="flex items-center gap-0.5">
+
                   {[...Array(t.rating)].map((_, i) => (
-                    <Star key={i} className="h-3.5 w-3.5 fill-gold text-gold" />
+                    <Star
+                      key={i}
+                      className="h-3.5 w-3.5"
+                      fill="#facc15"
+                      stroke="#facc15"
+                    />
                   ))}
+
                 </div>
-                <span className="text-[11px] text-muted-foreground">{t.date}</span>
+
+                <span className="text-[11px] text-muted-foreground">
+                  {t.date}
+                </span>
+
               </div>
 
+              {/* CONTENT */}
               <Quote className="mt-5 h-5 w-5 text-gold/60" />
+
               <p className="mt-3 text-deep-green/90 leading-relaxed text-[15px] flex-1">
                 {t.q}
               </p>
 
               <div className="gold-divider my-6" />
+
+              {/* FOOTER */}
               <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">📍 {t.city}</span>
+
+                <span className="text-muted-foreground">
+                  📍 {t.city}
+                </span>
+
                 <span className="px-2 py-1 rounded-full bg-secondary text-deep-green/70 font-medium tracking-wide">
                   {t.tag}
                 </span>
+
               </div>
+
             </div>
+
           ))}
+
         </div>
       </div>
     </section>
@@ -1030,6 +1130,13 @@ const hasHalfStar = rating % 1 >= 0.5;
   );
 }
 
+
+
+
+
+
+
+
 function VideoTestimonials() {
   const [activeVideo, setActiveVideo] = useState(null);
   const videos = [
@@ -1147,11 +1254,16 @@ function VideoTestimonials() {
                   <div className="font-semibold text-deep-green text-sm">{v.name}</div>
                   <div className="text-xs text-muted-foreground">{v.role} · {v.city}</div>
                 </div>
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-3.5 w-3.5 fill-gold text-gold" />
-                  ))}
-                </div>
+              <div className="flex items-center gap-1">
+  {[...Array(5)].map((_, i) => (
+    <Star
+      key={i}
+      className="h-3.5 w-3.5"
+      fill="#facc15"
+      stroke="#facc15"
+    />
+  ))}
+</div>
               </div>
             </div>
           ))}
