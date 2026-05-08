@@ -15,6 +15,8 @@ import parent4 from "./assets/parent-4.jpg";
 import pradeepImg from "./assets/pradeep.png";
 import jatinImg from "./assets/jatin.png";
 
+
+
 const CTA_HREF = "#book";
 
 function PrimaryCTA({ className = "", children }) {
@@ -1678,6 +1680,7 @@ function LandingPage() {
         <NotForYou />
         <FAQ />
         <FinalCTA />
+        
       </main>
       <Footer />
       <StickyMobileCTA />
