@@ -273,14 +273,15 @@ export default function ThankYou() {
             </Link>
 
             {/* Support */}
-            <a
-              href="tel:+919999999999"
-              className="inline-flex items-center justify-center gap-2 border border-[#003b2f] text-[#003b2f] hover:bg-[#003b2f] hover:text-white px-6 py-3 rounded-full text-sm font-semibold transition-all duration-300"
-            >
-              Contact Support
-              <ArrowRight className="h-4 w-4" />
-            </a>
-
+          <a
+  href="https://wa.me/917823838638"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex items-center justify-center gap-2 border border-[#003b2f] text-[#003b2f] hover:bg-[#003b2f] hover:text-white px-6 py-3 rounded-full text-sm font-semibold transition-all duration-300"
+>
+  WhatsApp Support
+  <ArrowRight className="h-4 w-4" />
+</a>
           </div>
 
         </div>
