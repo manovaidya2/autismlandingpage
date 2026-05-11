@@ -17,7 +17,7 @@ import jatinImg from "./assets/jatin.png";
 
 
 
-const CTA_HREF = "#book";
+const CTA_HREF = "https://pages.razorpay.com/pl_SlIYdiTps2YoCM/view";
 
 function PrimaryCTA({ className = "", children }) {
   return (
@@ -253,23 +253,35 @@ function VSL() {
         </div>
 
         {/* Nice CTA Button */}
-        <div className="mt-10">
-          <button
-            onClick={scrollToAssessment}
-            className="group relative inline-flex items-center justify-center gap-3 rounded-full bg-gradient-gold text-deep-green px-10 py-5 text-lg font-semibold transition-all duration-300 hover:shadow-2xl transform hover:scale-105 active:scale-95 overflow-hidden"
-          >
-            {/* Shine effect */}
-            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></span>
-            
-            <span className="text-xl">📋</span>
-            <span>Book Your ₹499 Clarity Session</span>
-            
-            {/* Animated arrow */}
-            <svg className="h-5 w-5 transition-all duration-300 group-hover:translate-x-1 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </button>
-        </div>
+       <div className="mt-10">
+  <a
+    href="https://rzp.io/rzp/ydaKYJsq"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="group relative inline-flex items-center justify-center gap-3 rounded-full bg-gradient-gold text-deep-green px-10 py-5 text-lg font-semibold transition-all duration-300 hover:shadow-2xl transform hover:scale-105 active:scale-95 overflow-hidden"
+  >
+    {/* Shine effect */}
+    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></span>
+
+    <span className="text-xl">📋</span>
+    <span>Book Neuro Assessment Development Test</span>
+
+    {/* Animated arrow */}
+    <svg
+      className="h-5 w-5 transition-all duration-300 group-hover:translate-x-1 group-hover:scale-110"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M13 7l5 5m0 0l-5 5m5-5H6"
+      />
+    </svg>
+  </a>
+</div>
 
         {/* Additional info */}
         <div className="mt-6 flex items-center justify-center gap-6 text-sm text-muted-foreground">
@@ -1351,7 +1363,7 @@ function Pricing() {
   return (
     <>
     <section id="book" className="py-28">
-      <div className="max-w-3xl mx-auto px-6 lg:px-12">
+      <div className="max-w-4xl mx-auto px-6 lg:px-12">
         <div className="text-center">
           <SectionLabel>The Clarity Session</SectionLabel>
           <h2 className="mt-6 text-3xl md:text-4xl lg:text-5xl text-deep-green">
@@ -1384,7 +1396,7 @@ function Pricing() {
   onClick={() => setOpen(true)}
   className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-gold text-deep-green px-8 py-4 font-medium hover:shadow-luxury hover:-translate-y-0.5 transition-all"
 >
-  Book Your ₹499 Clarity Session
+  Book Neuro Assessment Development Test
 </a>
               <div className="flex items-center gap-2 text-sm text-gold">
                 <Clock className="h-4 w-4" /> Limited slots this week
@@ -1706,7 +1718,233 @@ function WhatsAppFloat() {
 }
 
 // Main LandingPage Component
+// Updated WelcomePopup with message field
+function WelcomePopup({ isOpen, onClose }) {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    message: ""  // Added message field
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("https://api.drankushgarg.com/api/appointments/book", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        // Store in localStorage that this user has already submitted the form
+        localStorage.setItem("popupSubmitted", "true");
+        localStorage.setItem("userName", formData.name);
+        localStorage.setItem("userEmail", formData.email);
+        
+        onClose(); // Close after successful submission
+        window.location.href = "/";
+      } else {
+        alert("Something went wrong. Please try again.");
+      }
+    } catch (err) {
+      alert("Network error. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fade-in">
+      <div className="relative bg-white rounded-2xl max-w-md w-full mx-4 shadow-2xl transform animate-scale-up overflow-hidden">
+        
+        {/* Gold Border Top */}
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-gold"></div>
+        
+        {/* Content */}
+        <div className="p-5">
+          {/* Icon */}
+          <div className="flex justify-center mb-2">
+            <div className="h-12 w-12 rounded-full bg-gradient-gold flex items-center justify-center">
+              <Brain className="h-6 w-6 text-deep-green" />
+            </div>
+          </div>
+
+          {/* Heading */}
+          <h3 className="text-xl font-bold text-center text-deep-green">
+            Get Your ₹499 Clarity Session
+          </h3>
+          
+          <p className="text-center text-muted-foreground mt-1 text-xs">
+            Limited slots this week
+          </p>
+
+          {/* Divider */}
+          <div className="gold-divider my-3"></div>
+
+          {/* Benefits */}
+          <div className="space-y-1.5 mb-4">
+            {[
+              "Structured child assessment",
+              "Neuro-development gap analysis",
+              "Personalized roadmap"
+            ].map((benefit, i) => (
+              <div key={i} className="flex items-center gap-2 text-xs">
+                <CheckCircle2 className="h-3.5 w-3.5 text-gold flex-shrink-0" />
+                <span className="text-deep-green">{benefit}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-2.5">
+            <div>
+              <input
+                type="text"
+                placeholder="Full Name"
+                required
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none transition text-sm"
+              />
+            </div>
+            
+            <div>
+              <input
+                type="email"
+                placeholder="Email Address"
+                required
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none transition text-sm"
+              />
+            </div>
+            
+            <div>
+              <input
+                type="tel"
+                placeholder="Phone Number"
+                required
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none transition text-sm"
+              />
+            </div>
+
+            {/* <div>
+              <input
+                type="text"
+                placeholder="City / Location"
+                value={formData.address}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none transition text-sm"
+              />
+            </div> */}
+
+            {/* New Message Field */}
+            <div>
+              <textarea
+                placeholder="Message / Note (e.g., child's age, concerns, etc.)"
+                rows="2"
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none transition text-sm resize-none"
+              />
+              <p className="text-[10px] text-muted-foreground mt-1">
+                💬 Share any specific concerns or questions
+              </p>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-gradient-gold text-deep-green py-2.5 rounded-lg font-semibold text-sm hover:shadow-lg transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70"
+            >
+              {isSubmitting ? (
+                <div className="flex items-center justify-center gap-2">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-deep-green border-t-transparent"></div>
+                  Processing...
+                </div>
+              ) : (
+                "Book ₹499 Clarity Session →"
+              )}
+            </button>
+          </form>
+
+          {/* Trust Badge */}
+          <p className="text-center text-[10px] text-muted-foreground mt-3">
+            🔒 Secure & Confidential • No spam
+          </p>
+        </div>
+
+        {/* Bottom Pattern */}
+        <div className="h-0.5 bg-gradient-gold/20"></div>
+      </div>
+
+      <style jsx>{`
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        
+        @keyframes scale-up {
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 0.3s ease-out;
+        }
+        
+        .animate-scale-up {
+          animation: scale-up 0.3s ease-out;
+        }
+      `}</style>
+    </div>
+  );
+}
+
+// Updated LandingPage - Check if user has already submitted before showing popup
 function LandingPage() {
+  const [showPopup, setShowPopup] = useState(false);
+
+  useEffect(() => {
+    // Check if user has already submitted the form in this browser
+    const hasSubmitted = localStorage.getItem("popupSubmitted");
+    
+    // Only show popup if user has NOT submitted before
+    if (!hasSubmitted) {
+      // Show popup after 1 second
+      const timer = setTimeout(() => {
+        setShowPopup(true);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, []); // Empty dependency array - runs once on mount
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Nav />
@@ -1724,19 +1962,21 @@ function LandingPage() {
         <CaseStudies />
         <Expectation />
         <GoogleReviews />
-        
         <Pricing />
         <Decision />
         <NotForYou />
         <FAQ />
         <FinalCTA />
-        
       </main>
       <Footer />
       <StickyMobileCTA />
       <WhatsAppFloat />
+      
+      {/* Welcome Popup - Only shows for users who haven't submitted */}
+      <WelcomePopup isOpen={showPopup} onClose={handleClosePopup} />
     </div>
   );
 }
 
 export default LandingPage;
+
