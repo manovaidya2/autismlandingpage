@@ -93,17 +93,20 @@ function Nav() {
           <a href="#faq" className="hover:text-gold transition">FAQ</a>
         </nav>
         <a href={CTA_HREF} className="hidden md:inline-flex items-center gap-2 text-sm font-bold text-primary-foreground bg-deep-green border border-gold/40 px-5 py-2.5 rounded-full hover:shadow-luxury transition-all flex-shrink-0">
-          <Sparkles className="h-3.5 w-3.5 text-gold" /> ₹499 Session
+          <Sparkles className="h-3.5 w-3.5 text-gold" /> Book Neuro Assessment Development Test
         </a>
       </div>
     </header>
   );
 }
 
+
+
 function Hero() {
   const rating = 4.9;
-const fullStars = Math.floor(rating);
-const hasHalfStar = rating % 1 >= 0.5;
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 >= 0.5;
+  
   return (
     <section className="relative pt-32 pb-24 lg:pt-40 lg:pb-32 overflow-hidden">
       <div
@@ -129,15 +132,25 @@ const hasHalfStar = rating % 1 >= 0.5;
               <span className="font-medium"> Neuro-Development Assessment.</span>
             </p>
           </div>
-          <div className="mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <PrimaryCTA />
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Clock className="h-4 w-4 text-gold" />
-              Limited slots this week
-            </div>
-          </div>
+          
+          {/* Watch Video Button - Replaces PrimaryCTA */}
+       <div className="mt-10 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+  <a
+    href="#watch-video"
+    className="inline-flex items-center justify-center gap-3 rounded-full bg-gradient-gold text-deep-green px-10 py-5 text-lg font-semibold transition-all hover:shadow-lg hover:scale-105 active:scale-95 animate-bounce"
+    style={{ minWidth: "280px" }}
+  >
+    <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M8 5v14l11-7z"/>
+    </svg>
+    Watch Video First
+    <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M9 18l6-6-6-6"/>
+    </svg>
+  </a>
+</div>
 
-         <div className="mt-10 grid sm:grid-cols-2 gap-4 max-w-2xl">
+          <div className="mt-10 grid sm:grid-cols-2 gap-4 max-w-2xl">
             <a
               href="https://www.google.com/search?q=manovaidya+reviews"
               target="_blank"
@@ -145,7 +158,6 @@ const hasHalfStar = rating % 1 >= 0.5;
               className="group flex items-center gap-4 p-4 rounded-xl bg-white border hover:border-yellow-400 transition-all"
             >
               <div className="flex-1">
-                
                 {/* Rating */}
                 <div className="flex items-center gap-2">
                   <span className="text-2xl font-bold text-green-800">
@@ -159,7 +171,6 @@ const hasHalfStar = rating % 1 >= 0.5;
 
                       return (
                         <span key={star} className="relative inline-flex h-4 w-4">
-                          
                           {/* Empty star */}
                           <Star className="h-4 w-4 text-gray-300" />
 
@@ -183,12 +194,9 @@ const hasHalfStar = rating % 1 >= 0.5;
                 <div className="text-xs text-gray-500 mt-1">
                   <span className="font-semibold text-green-800">Rating</span> · Live
                 </div>
-
               </div>
             </a>
-    
 
-      
             <LiveAppointments />
           </div>
 
@@ -203,7 +211,7 @@ const hasHalfStar = rating % 1 >= 0.5;
             <img src={doctorImg} alt="Neuro-Ayurveda System Developer" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-deep-green/40 via-transparent to-transparent" />
             <div className="absolute bottom-6 left-6 right-6 text-primary-foreground">
-              <div className="text-m  uppercase tracking-[0.25em] text-gold mb-2">Profession</div>
+              {/* <div className="text-m uppercase tracking-[0.25em] text-gold mb-2">Profession</div> */}
               <div className="font-display text-2xl">Neuro-Ayurveda Specialist</div>
             </div>
           </div>
@@ -216,8 +224,15 @@ const hasHalfStar = rating % 1 >= 0.5;
 }
 
 function VSL() {
+  const scrollToAssessment = () => {
+    const assessmentSection = document.getElementById('assessment');
+    if (assessmentSection) {
+      assessmentSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <section className="py-24 bg-cream">
+    <section id="watch-video" className="py-24 bg-cream">
       <div className="max-w-5xl mx-auto px-6 lg:px-12 text-center">
         <SectionLabel>Watch First</SectionLabel>
         <h2 className="mt-6 text-3xl md:text-4xl lg:text-5xl text-deep-green">
@@ -226,20 +241,55 @@ function VSL() {
         <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
           A 3-minute briefing on why most therapies fail — and how a structured system creates predictable progress.
         </p>
+        
         <div className="mt-12 aspect-video rounded-2xl overflow-hidden shadow-luxury">
-  <iframe
-    className="w-full h-full"
-    src="https://www.youtube.com/embed/ZpXSu4BIRiE"
-    title="YouTube video player"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-    allowFullScreen
-  ></iframe>
-</div>
+          <iframe
+            className="w-full h-full"
+            src="https://www.youtube.com/embed/ZpXSu4BIRiE"
+            title="YouTube video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
+        </div>
+
+        {/* Nice CTA Button */}
+        <div className="mt-10">
+          <button
+            onClick={scrollToAssessment}
+            className="group relative inline-flex items-center justify-center gap-3 rounded-full bg-gradient-gold text-deep-green px-10 py-5 text-lg font-semibold transition-all duration-300 hover:shadow-2xl transform hover:scale-105 active:scale-95 overflow-hidden"
+          >
+            {/* Shine effect */}
+            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></span>
+            
+            <span className="text-xl">📋</span>
+            <span>Book Your ₹499 Clarity Session</span>
+            
+            {/* Animated arrow */}
+            <svg className="h-5 w-5 transition-all duration-300 group-hover:translate-x-1 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Additional info */}
+        <div className="mt-6 flex items-center justify-center gap-6 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <svg className="h-4 w-4 text-gold" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+            </svg>
+            <span>Limited slots this week</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <svg className="h-4 w-4 text-gold" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+            <span>180-Day structured plan</span>
+          </div>
+        </div>
       </div>
     </section>
   );
 }
-
 function PainSection() {
   const tried = ["Speech therapy", "Occupational therapy", "Behaviour therapy"];
   const feel = ["Progress is slow", "Results are inconsistent", "Direction is unclear"];
@@ -1580,13 +1630,13 @@ function StickyMobileCTA() {
   return (
       <>
       {/* Sticky Button */}
-      <div className="fixed bottom-0 inset-x-0 z-30 md:hidden p-4 bg-background/95 backdrop-blur border-t border-border">
+      <div className="fixed bottom-0 inset-x-0 z-30 md:hidden p-4 bg-background/100 backdrop-blur border-t border-border">
         <button
           onClick={() => setOpen(true)}
           className="flex items-center justify-center gap-2 w-full rounded-full bg-deep-green text-primary-foreground py-3.5 font-medium"
         >
-          <Sparkles className="h-4 w-4 text-gold" />
-          Book ₹499 Clarity Session
+         
+          Book Neuro Assessment Development Test
         </button>
       </div>
 
