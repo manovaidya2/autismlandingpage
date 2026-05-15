@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import {
-  Brain, CheckCircle2, Sparkles, Calendar, ShieldCheck, Compass,
-  PlayCircle, Quote, ChevronDown, MessageCircle, X, Star, Users, Clock,
+  Brain, CheckCircle2, Sparkles, Calendar, ShieldCheck, Compass, User, Mail, Phone,
+  MapPin, PlayCircle, Quote, ChevronDown, MessageCircle, X, Star, Users, Clock,
+  AlertCircle, Video, Building, Clock as ClockIcon
 } from "lucide-react";
 
 // Import images (update paths as needed)
@@ -14,6 +15,8 @@ import parent3 from "./assets/parent-3.jpg";
 import parent4 from "./assets/parent-4.jpg";
 import pradeepImg from "./assets/pradeep.png";
 import jatinImg from "./assets/jatin.png";
+import AutismBookingModal from "./components/AutismBookingModal";
+import axios from "./api/axiosInstance";
 
 
 
@@ -76,27 +79,42 @@ function LiveAppointments() {
 }
 
 function Nav() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleBookingClick = (e) => {
+    e.preventDefault();
+    setIsModalOpen(true);
+  };
+
   return (
-    <header className="fixed top-0 inset-x-0 z-40 backdrop-blur-md bg-background/95 border-b border-border shadow-soft">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between gap-8">
-        <a href="/" className="flex items-center gap-3 flex-shrink-0">
-          <img src={logoImg} alt="Manovaidya" className="h-10 w-auto" />
-          {/* <div className="leading-tight">
-            <div className="font-display text-xl text-deep-green font-bold tracking-tight">Manovaidya</div>
-            <div className="text-[10px] uppercase tracking-[0.2em] text-gold font-semibold">Neuro-Ayurveda</div>
-          </div> */}
-        </a>
-        <nav className="hidden md:flex items-center gap-7 text-sm font-semibold text-deep-green">
-          <a href="#system" className="hover:text-gold transition">The System</a>
-          <a href="#plan" className="hover:text-gold transition">180-Day Plan</a>
-          <a href="#cases" className="hover:text-gold transition">Case Studies</a>
-          <a href="#faq" className="hover:text-gold transition">FAQ</a>
-        </nav>
-        <a href={CTA_HREF} className="hidden md:inline-flex items-center gap-2 text-sm font-bold text-primary-foreground bg-deep-green border border-gold/40 px-5 py-2.5 rounded-full hover:shadow-luxury transition-all flex-shrink-0">
-          <Sparkles className="h-3.5 w-3.5 text-gold" /> Book Neuro Assessment Development Test
-        </a>
-      </div>
-    </header>
+    <>
+      <header className="fixed top-0 inset-x-0 z-40 backdrop-blur-md bg-background/95 border-b border-border shadow-soft">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 h-20 flex items-center justify-between gap-8">
+          <a href="/" className="flex items-center gap-3 flex-shrink-0">
+            <img src={logoImg} alt="Manovaidya" className="h-10 w-auto" />
+            {/* <div className="leading-tight">
+              <div className="font-display text-xl text-deep-green font-bold tracking-tight">Manovaidya</div>
+              <div className="text-[10px] uppercase tracking-[0.2em] text-gold font-semibold">Neuro-Ayurveda</div>
+            </div> */}
+          </a>
+          <nav className="hidden md:flex items-center gap-7 text-sm font-semibold text-deep-green">
+            <a href="#system" className="hover:text-gold transition">The System</a>
+            <a href="#plan" className="hover:text-gold transition">180-Day Plan</a>
+            <a href="#cases" className="hover:text-gold transition">Case Studies</a>
+            <a href="#faq" className="hover:text-gold transition">FAQ</a>
+          </nav>
+          <button 
+            onClick={handleBookingClick}
+            className="hidden md:inline-flex items-center gap-2 text-sm font-bold text-primary-foreground bg-deep-green border border-gold/40 px-5 py-2.5 rounded-full hover:shadow-luxury transition-all flex-shrink-0 cursor-pointer"
+          >
+            <Sparkles className="h-3.5 w-3.5 text-gold" /> Book Neuro Assessment Development Test
+          </button>
+        </div>
+      </header>
+
+      {/* Booking Modal */}
+      <AutismBookingModal open={isModalOpen} setOpen={setIsModalOpen} />
+    </>
   );
 }
 
@@ -223,7 +241,10 @@ function Hero() {
   );
 }
 
+
 function VSL() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const scrollToAssessment = () => {
     const assessmentSection = document.getElementById('assessment');
     if (assessmentSection) {
@@ -231,77 +252,126 @@ function VSL() {
     }
   };
 
+  const handleBookingClick = (e) => {
+    e.preventDefault();
+    setIsModalOpen(true);
+  };
+
   return (
-    <section id="watch-video" className="py-24 bg-cream">
-      <div className="max-w-5xl mx-auto px-6 lg:px-12 text-center">
-        <SectionLabel>Watch First</SectionLabel>
-        <h2 className="mt-6 text-3xl md:text-4xl lg:text-5xl text-deep-green">
-          Watch This Before Starting Any Autism Treatment
-        </h2>
-        <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
-          A 3-minute briefing on why most therapies fail — and how a structured system creates predictable progress.
-        </p>
-        
-        <div className="mt-12 aspect-video rounded-2xl overflow-hidden shadow-luxury">
-          <iframe
-            className="w-full h-full"
-            src="https://www.youtube.com/embed/ZpXSu4BIRiE"
-            title="YouTube video player"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          ></iframe>
-        </div>
+    <>
+      <section id="watch-video" className="py-24 bg-cream">
+        <div className="max-w-5xl mx-auto px-6 lg:px-12 text-center">
+          <SectionLabel>Watch First</SectionLabel>
+          <h2 className="mt-6 text-3xl md:text-4xl lg:text-5xl text-deep-green">
+            Watch This Before Starting Any Autism Treatment
+          </h2>
+          <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
+            A 3-minute briefing on why most therapies fail — and how a structured system creates predictable progress.
+          </p>
+          
+          <div className="mt-12 aspect-video rounded-2xl overflow-hidden shadow-luxury">
+            <iframe
+              className="w-full h-full"
+              src="https://www.youtube.com/embed/ZpXSu4BIRiE"
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
 
-        {/* Nice CTA Button */}
-       <div className="mt-10">
-  <a
-    href="https://rzp.io/rzp/ydaKYJsq"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="group relative inline-flex items-center justify-center gap-3 rounded-full bg-gradient-gold text-deep-green px-10 py-5 text-lg font-semibold transition-all duration-300 hover:shadow-2xl transform hover:scale-105 active:scale-95 overflow-hidden"
+          {/* Nice CTA Button */}
+{/* PREMIUM CTA BUTTON */}
+{/* PREMIUM CTA BUTTON */}
+<div className="mt-8 sm:mt-10 flex justify-center px-4">
+  <button
+    onClick={handleBookingClick}
+    className="
+      group relative w-full
+      max-w-[320px] sm:max-w-[500px] lg:max-w-[540px]
+      overflow-hidden rounded-full bg-[#d9a62c]
+      px-4 py-3 sm:px-7 sm:py-4 lg:px-8 lg:py-4
+      shadow-[0_14px_35px_rgba(217,166,44,0.28)]
+      transition-all duration-500
+      hover:scale-[1.02]
+      hover:shadow-[0_20px_55px_rgba(217,166,44,0.38)]
+      active:scale-[0.98]
+    "
   >
-    {/* Shine effect */}
-    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></span>
+    {/* SHINE EFFECT */}
+    <span className="absolute inset-0 overflow-hidden rounded-full">
+      <span className="absolute top-0 left-[-120%] h-full w-[55%] rotate-12 bg-white/20 blur-2xl transition-all duration-1000 group-hover:left-[140%]" />
+    </span>
 
-    <span className="text-xl">📋</span>
-    <span>Book Neuro Assessment Development Test</span>
+    {/* CONTENT */}
+    <div className="relative flex items-center justify-between gap-3">
+      
+      {/* TEXT */}
+      <span
+        className="
+          text-left font-bold text-[#082b1d]
+          text-[11px] xs:text-[12px] sm:text-[17px] lg:text-[18px]
+          leading-tight
+          whitespace-nowrap
+        "
+      >
+        Book Neuro Assessment Development Test
+      </span>
 
-    {/* Animated arrow */}
-    <svg
-      className="h-5 w-5 transition-all duration-300 group-hover:translate-x-1 group-hover:scale-110"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M13 7l5 5m0 0l-5 5m5-5H6"
-      />
-    </svg>
-  </a>
+      {/* ARROW */}
+      <div
+        className="
+          flex h-9 w-9 sm:h-10 sm:w-10 lg:h-11 lg:w-11
+          items-center justify-center rounded-full
+          bg-[#082b1d] text-white
+          transition-all duration-300
+          group-hover:translate-x-1
+          group-hover:scale-110
+          flex-shrink-0
+        "
+      >
+        <svg
+          className="h-4 w-4 sm:h-5 sm:w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2.5}
+            d="M13 7l5 5m0 0l-5 5m5-5H6"
+          />
+        </svg>
+      </div>
+    </div>
+  </button>
 </div>
-
-        {/* Additional info */}
-        <div className="mt-6 flex items-center justify-center gap-6 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <svg className="h-4 w-4 text-gold" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-            </svg>
-            <span>Limited slots this week</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <svg className="h-4 w-4 text-gold" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-            </svg>
-            <span>180-Day structured plan</span>
+          {/* Additional info */}
+          <div className="mt-6 flex items-center justify-center gap-6 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <svg className="h-4 w-4 text-gold" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+              </svg>
+              <span>Limited slots this week</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <svg className="h-4 w-4 text-gold" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+              <span>180-Day structured plan</span>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Autism Booking Modal */}
+      <AutismBookingModal open={isModalOpen} setOpen={setIsModalOpen} />
+    </>
   );
 }
+
+
+
 function PainSection() {
   const tried = ["Speech therapy", "Occupational therapy", "Behaviour therapy"];
   const feel = ["Progress is slow", "Results are inconsistent", "Direction is unclear"];
@@ -1358,6 +1428,8 @@ function Expectation() {
   );
 }
 
+
+
 function Pricing() {
   const [open, setOpen] = useState(false);
   return (
@@ -1503,32 +1575,65 @@ function Pricing() {
 }
 
 function Decision() {
+  const [openBooking, setOpenBooking] = useState(false);
+
   return (
-    <section className="py-28 bg-cream">
-      <div className="max-w-5xl mx-auto px-6 lg:px-12">
-        <div className="text-center">
-          <SectionLabel>You Have Two Options</SectionLabel>
-          <h2 className="mt-6 text-3xl md:text-4xl lg:text-5xl text-deep-green">A clear decision point.</h2>
-        </div>
-        <div className="mt-14 grid md:grid-cols-2 gap-6">
-          <div className="p-10 rounded-2xl bg-card border border-border opacity-70">
-            <div className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Option A</div>
-            <h3 className="mt-4 text-2xl text-deep-green">Continue trial-based approaches</h3>
-            <p className="mt-4 text-muted-foreground">
-              Keep trying random therapies, hoping something works. Slow progress. Unclear direction.
-            </p>
+    <>
+      <section className="py-28 bg-cream">
+        <div className="max-w-5xl mx-auto px-6 lg:px-12">
+          <div className="text-center">
+            <SectionLabel>You Have Two Options</SectionLabel>
+
+            <h2 className="mt-6 text-3xl md:text-4xl lg:text-5xl text-deep-green">
+              A clear decision point.
+            </h2>
           </div>
-          <div className="p-10 rounded-2xl bg-deep-green text-primary-foreground shadow-luxury border border-gold/30">
-            <div className="text-xs uppercase tracking-[0.3em] text-gold">Option B</div>
-            <h3 className="mt-4 text-2xl">Understand the problem clearly</h3>
-            <p className="mt-4 text-primary-foreground/80">
-              Move forward with a structured system. Predictable phases. Measurable progress.
-            </p>
-            <PrimaryCTA className="mt-8" />
+
+          <div className="mt-14 grid md:grid-cols-2 gap-6">
+            <div className="p-10 rounded-2xl bg-card border border-border opacity-70">
+              <div className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
+                Option A
+              </div>
+
+              <h3 className="mt-4 text-2xl text-deep-green">
+                Continue trial-based approaches
+              </h3>
+
+              <p className="mt-4 text-muted-foreground">
+                Keep trying random therapies, hoping something works. Slow
+                progress. Unclear direction.
+              </p>
+            </div>
+
+            <div className="p-10 rounded-2xl bg-deep-green text-primary-foreground shadow-luxury border border-gold/30">
+              <div className="text-xs uppercase tracking-[0.3em] text-gold">
+                Option B
+              </div>
+
+              <h3 className="mt-4 text-2xl">
+                Understand the problem clearly
+              </h3>
+
+              <p className="mt-4 text-primary-foreground/80">
+                Move forward with a structured system. Predictable phases.
+                Measurable progress.
+              </p>
+
+              <button
+                type="button"
+                onClick={() => setOpenBooking(true)}
+                className="mt-8 inline-flex items-center justify-center  rounded-full bg-deep-green text-primary-foreground px-3 py-2 text-base font-normal tracking-wide transition-all hover:shadow-luxury hover:-translate-y-0.5 border border-gold/30"
+              >
+                <Sparkles className="h-4 w-4 text-gold  " />
+              Book Neuro Assessment Development Test
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <AutismBookingModal open={openBooking} setOpen={setOpenBooking} />
+    </>
   );
 }
 
@@ -1605,24 +1710,52 @@ function FAQ() {
 }
 
 function FinalCTA() {
+  const [openBooking, setOpenBooking] = useState(false);
+
   return (
-    <section className="py-32 bg-gradient-hero text-primary-foreground relative overflow-hidden">
-      <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url(${neuralBg})`, backgroundSize: "cover" }} />
-      <div className="relative max-w-3xl mx-auto px-6 lg:px-12 text-center">
-        <h2 className="font-display text-4xl md:text-5xl lg:text-6xl leading-tight">
-          Autism improvement begins with <em className="not-italic text-gradient-gold">clarity</em>…
-          <br /> not random treatment.
-        </h2>
-        <div className="gold-divider my-10 max-w-xs mx-auto" />
-        <a href="#book" className="inline-flex items-center justify-center gap-2 rounded-full bg-gold text-deep-green px-10 py-5 font-medium text-lg hover:shadow-luxury hover:-translate-y-0.5 transition-all">
-          <Sparkles className="h-5 w-5" /> Book Your ₹499 Clarity Session
-        </a>
-        <p className="mt-6 text-sm text-primary-foreground/60">Limited slots available this week</p>
-      </div>
-    </section>
+    <>
+      <section className="py-32 bg-gradient-hero text-primary-foreground relative overflow-hidden">
+        <div
+          className="absolute inset-0 opacity-10"
+          style={{
+            backgroundImage: `url(${neuralBg})`,
+            backgroundSize: "cover",
+          }}
+        />
+
+        <div className="relative max-w-3xl mx-auto px-6 lg:px-12 text-center">
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl leading-tight">
+            Autism improvement begins with{" "}
+            <em className="not-italic text-gradient-gold">clarity</em>…
+            <br /> not random treatment.
+          </h2>
+
+          <div className="gold-divider my-10 max-w-xs mx-auto" />
+
+          {/* BUTTON */}
+          <button
+            type="button"
+            onClick={() => setOpenBooking(true)}
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-gold text-deep-green px-10 py-5 font-medium text-lg hover:shadow-luxury hover:-translate-y-0.5 transition-all"
+          >
+            <Sparkles className="h-5 w-5" />
+            Book Neuro Assessment Development Test
+          </button>
+
+          <p className="mt-6 text-sm text-primary-foreground/60">
+            Limited slots available this week
+          </p>
+        </div>
+      </section>
+
+      {/* MODAL */}
+      <AutismBookingModal
+        open={openBooking}
+        setOpen={setOpenBooking}
+      />
+    </>
   );
 }
-
 function Footer() {
   return (
     <footer className="py-12 border-t border-border">
@@ -1717,44 +1850,177 @@ function WhatsAppFloat() {
   );
 }
 
-// Main LandingPage Component
-// Updated WelcomePopup with message field
+
 function WelcomePopup({ isOpen, onClose }) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
+    date: "",
+    time: "",
+    mode: "online",
     address: "",
-    message: ""  // Added message field
+    message: ""
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [errors, setErrors] = useState({});
+
+  // Time slots (same as AutismBookingModal)
+  const timeSlots = [
+    "11:00-11:10 AM",
+    "11:10-11:20 AM",
+    "11:20-11:30 AM",
+    "11:30-11:40 AM",
+    "11:40-11:50 AM",
+    "11:50-12:00 PM",
+  ];
+
+  // Prevent body scroll when popup is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen]);
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Full name is required";
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
+    }
+
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Phone number is required";
+    } else if (!/^[\d\s+()-]{8,}$/.test(formData.phone)) {
+      newErrors.phone = "Valid phone number required";
+    }
+
+    if (!formData.date) {
+      newErrors.date = "Date is required";
+    }
+
+    if (!formData.time) {
+      newErrors.time = "Time slot is required";
+    }
+
+    if (!formData.mode) {
+      newErrors.mode = "Please select consultation mode";
+    }
+
+    return newErrors;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
+
+    if (submitError) {
+      setSubmitError("");
+    }
+  };
+
+  const handleModeSelect = (mode) => {
+    setFormData((prev) => ({
+      ...prev,
+      mode,
+    }));
+    if (errors.mode) {
+      setErrors((prev) => ({
+        ...prev,
+        mode: "",
+      }));
+    }
+  };
+
+  const getMinDate = () => {
+    const today = new Date();
+    return today.toISOString().split("T")[0];
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const newErrors = validateForm();
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     setIsSubmitting(true);
+    setSubmitError("");
 
     try {
-      const response = await fetch("https://api.drankushgarg.com/api/appointments/book", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+      // Using the same API endpoint as AutismBookingModal
+      const response = await axios.post("/autism-bookings", {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        date: formData.date,
+        time: formData.time,
+        mode: formData.mode,
+        address: formData.address,
+        message: formData.message
       });
 
-      if (response.ok) {
-        // Store in localStorage that this user has already submitted the form
+      if (response.status === 200 || response.status === 201) {
         localStorage.setItem("popupSubmitted", "true");
         localStorage.setItem("userName", formData.name);
         localStorage.setItem("userEmail", formData.email);
-        
-        onClose(); // Close after successful submission
+        localStorage.setItem("autismBookingFormData", JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          date: formData.date,
+          time: formData.time,
+          mode: formData.mode,
+          address: formData.address,
+          message: formData.message
+        }));
+
+        onClose();
+
+        // Redirect to payment page (same as AutismBookingModal)
         window.location.href = "/";
       } else {
-        alert("Something went wrong. Please try again.");
+        setSubmitError(response.data.message || "Failed to submit form. Please try again.");
       }
     } catch (err) {
-      alert("Network error. Please try again.");
+      console.error("Booking error:", err);
+
+      if (err.response) {
+        setSubmitError(err.response.data.message || "Server error. Please try again.");
+      } else if (err.request) {
+        setSubmitError("No response from server. Please check your connection.");
+      } else {
+        setSubmitError("Something went wrong. Please try again.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -1763,161 +2029,322 @@ function WelcomePopup({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm animate-fade-in">
-      <div className="relative bg-white rounded-2xl max-w-md w-full mx-4 shadow-2xl transform animate-scale-up overflow-hidden">
-        
-        {/* Gold Border Top */}
-        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-gold"></div>
-        
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+    >
+      <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-[28px] bg-white shadow-2xl">
+        {/* Close Button */}
+        <div className="sticky top-0 z-10 flex justify-end bg-white pt-4 pr-4">
+          <button
+            type="button"
+            onClick={() => onClose()}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f5f2ea] text-[#0b2f1d] hover:bg-[#e8dfd0] transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
         {/* Content */}
-        <div className="p-5">
-          {/* Icon */}
-          <div className="flex justify-center mb-2">
-            <div className="h-12 w-12 rounded-full bg-gradient-gold flex items-center justify-center">
-              <Brain className="h-6 w-6 text-deep-green" />
+        <div className="px-5 pb-7 sm:px-7">
+          {/* Icon & Heading */}
+          <div className="flex flex-col items-center text-center">
+            <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#d6a22e] to-[#f5d76e]">
+              <Sparkles className="h-7 w-7 text-[#0b2f1d]" />
             </div>
+
+            <h3 className="font-serif text-[28px] sm:text-[36px] leading-tight text-[#0b2f1d]">
+              Get Your ₹499 Clarity Session
+            </h3>
+
+            <p className="mt-1 text-[13px] text-[#6b756c]">
+              Limited slots this week
+            </p>
           </div>
 
-          {/* Heading */}
-          <h3 className="text-xl font-bold text-center text-deep-green">
-            Get Your ₹499 Clarity Session
-          </h3>
-          
-          <p className="text-center text-muted-foreground mt-1 text-xs">
-            Limited slots this week
-          </p>
-
-          {/* Divider */}
-          <div className="gold-divider my-3"></div>
-
           {/* Benefits */}
-          <div className="space-y-1.5 mb-4">
+          <div className="mt-4 space-y-2 rounded-2xl bg-[#fbfaf7] p-4 border border-[#e5ddcf]">
             {[
               "Structured child assessment",
               "Neuro-development gap analysis",
               "Personalized roadmap"
             ].map((benefit, i) => (
-              <div key={i} className="flex items-center gap-2 text-xs">
-                <CheckCircle2 className="h-3.5 w-3.5 text-gold flex-shrink-0" />
-                <span className="text-deep-green">{benefit}</span>
+              <div key={i} className="flex items-center gap-2.5 text-sm">
+                <CheckCircle2 className="h-4 w-4 text-[#d6a22e] flex-shrink-0" />
+                <span className="text-[#193b2b]">{benefit}</span>
               </div>
             ))}
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-2.5">
-            <div>
-              <input
-                type="text"
-                placeholder="Full Name"
-                required
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none transition text-sm"
-              />
+          {/* Error Message */}
+          {submitError && (
+            <div className="mt-4 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-3 text-[13px] text-red-700">
+              <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+              <span>{submitError}</span>
             </div>
-            
-            <div>
-              <input
-                type="email"
-                placeholder="Email Address"
-                required
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none transition text-sm"
-              />
-            </div>
-            
-            <div>
-              <input
-                type="tel"
-                placeholder="Phone Number"
-                required
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none transition text-sm"
-              />
+          )}
+
+          {/* FORM - Same structure as AutismBookingModal */}
+          <form onSubmit={handleSubmit} className="mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* Name */}
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
+                  Full Name
+                </label>
+
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b756c]" />
+
+                  <input
+                    name="name"
+                    type="text"
+                    placeholder="Enter your name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className={`w-full rounded-2xl border px-10 py-3 text-sm outline-none transition-all focus:border-[#d6a22e] ${
+                      errors.name
+                        ? "border-red-400 bg-red-50"
+                        : "border-[#e5ddcf] bg-[#fbfaf7]"
+                    }`}
+                  />
+                </div>
+
+                {errors.name && (
+                  <p className="mt-1 text-[11px] text-red-500">{errors.name}</p>
+                )}
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
+                  Email Address
+                </label>
+
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b756c]" />
+
+                  <input
+                    name="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className={`w-full rounded-2xl border px-10 py-3 text-sm outline-none transition-all focus:border-[#d6a22e] ${
+                      errors.email
+                        ? "border-red-400 bg-red-50"
+                        : "border-[#e5ddcf] bg-[#fbfaf7]"
+                    }`}
+                  />
+                </div>
+
+                {errors.email && (
+                  <p className="mt-1 text-[11px] text-red-500">{errors.email}</p>
+                )}
+              </div>
+
+              {/* Phone */}
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
+                  Phone Number
+                </label>
+
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b756c]" />
+
+                  <input
+                    name="phone"
+                    type="tel"
+                    placeholder="Enter your phone number"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className={`w-full rounded-2xl border px-10 py-3 text-sm outline-none transition-all focus:border-[#d6a22e] ${
+                      errors.phone
+                        ? "border-red-400 bg-red-50"
+                        : "border-[#e5ddcf] bg-[#fbfaf7]"
+                    }`}
+                  />
+                </div>
+
+                {errors.phone && (
+                  <p className="mt-1 text-[11px] text-red-500">{errors.phone}</p>
+                )}
+              </div>
+
+              {/* Date */}
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
+                  Select Date
+                </label>
+
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b756c]" />
+
+                  <input
+                    type="date"
+                    name="date"
+                    value={formData.date}
+                    onChange={handleChange}
+                    min={getMinDate()}
+                    className={`w-full rounded-2xl border px-10 py-3 text-sm outline-none transition-all focus:border-[#d6a22e] ${
+                      errors.date
+                        ? "border-red-400 bg-red-50"
+                        : "border-[#e5ddcf] bg-[#fbfaf7]"
+                    }`}
+                  />
+                </div>
+
+                {errors.date && (
+                  <p className="mt-1 text-[11px] text-red-500">{errors.date}</p>
+                )}
+              </div>
+
+              {/* City / Location */}
+              {/* <div>
+                <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
+                  City / Location
+                </label>
+
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b756c]" />
+
+                  <input
+                    name="address"
+                    type="text"
+                    placeholder="Enter your city"
+                    value={formData.address}
+                    onChange={handleChange}
+                    className="w-full rounded-2xl border border-[#e5ddcf] bg-[#fbfaf7] px-10 py-3 text-sm outline-none transition-all focus:border-[#d6a22e]"
+                  />
+                </div>
+              </div>
+
+              {/* Message */}
+              {/* <div>
+                <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
+                  Message / Note
+                </label> */}
+{/* 
+                <div className="relative">
+                  <MessageCircle className="absolute left-3 top-4 w-4 h-4 text-[#6b756c]" />
+
+                  <textarea
+                    name="message"
+                    placeholder="Share any specific concerns (child's age, challenges, etc.)"
+                    rows="3"
+                    value={formData.message}
+                    onChange={handleChange}
+                    className="w-full rounded-2xl border border-[#e5ddcf] bg-[#fbfaf7] px-10 py-3 text-sm outline-none transition-all focus:border-[#d6a22e] resize-none"
+                  />
+                </div>
+
+                <p className="mt-1 text-[10px] text-[#6b756c]">
+                  💬 Share any specific concerns or questions
+                </p>
+              </div> */} 
+
+              {/* Mode Selection - Full width */}
+              <div className="md:col-span-2">
+                <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
+                  Consultation Mode
+                </label>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => handleModeSelect("online")}
+                    className={`rounded-xl border-2 p-4 text-center transition-all ${
+                      formData.mode === "online"
+                        ? "border-[#d6a22e] bg-[#d6a22e]/10 text-[#06351f]"
+                        : "border-[#e5ddcf] bg-[#fbfaf7] text-[#5f665f] hover:border-[#d6a22e]"
+                    }`}
+                  >
+                    <Video className="w-6 h-6 mx-auto mb-2" />
+                    <span className="font-semibold">Online</span>
+                    <p className="text-xs mt-1">Video Consultation</p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleModeSelect("clinic")}
+                    className={`rounded-xl border-2 p-4 text-center transition-all ${
+                      formData.mode === "clinic"
+                        ? "border-[#d6a22e] bg-[#d6a22e]/10 text-[#06351f]"
+                        : "border-[#e5ddcf] bg-[#fbfaf7] text-[#5f665f] hover:border-[#d6a22e]"
+                    }`}
+                  >
+                    <Building className="w-6 h-6 mx-auto mb-2" />
+                    <span className="font-semibold">Clinic</span>
+                    <p className="text-xs mt-1">In-Person Visit</p>
+                  </button>
+                </div>
+
+                {errors.mode && (
+                  <p className="mt-1 text-[11px] text-red-500">{errors.mode}</p>
+                )}
+              </div>
+
+              {/* Time - Full width */}
+              <div className="md:col-span-2">
+                <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
+                  Select Time
+                </label>
+
+                <div className="relative">
+                  <ClockIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b756c]" />
+
+                  <select
+                    name="time"
+                    value={formData.time}
+                    onChange={handleChange}
+                    className={`w-full rounded-2xl border px-10 py-3 text-sm outline-none appearance-none transition-all focus:border-[#d6a22e] ${
+                      errors.time
+                        ? "border-red-400 bg-red-50"
+                        : "border-[#e5ddcf] bg-[#fbfaf7]"
+                    }`}
+                  >
+                    <option value="">Select Time Slot</option>
+                    {timeSlots.map((slot) => (
+                      <option key={slot} value={slot}>
+                        {slot}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {errors.time && (
+                  <p className="mt-1 text-[11px] text-red-500">{errors.time}</p>
+                )}
+              </div>
             </div>
 
-            {/* <div>
-              <input
-                type="text"
-                placeholder="City / Location"
-                value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none transition text-sm"
-              />
-            </div> */}
-
-            {/* New Message Field */}
-            <div>
-              <textarea
-                placeholder="Message / Note (e.g., child's age, concerns, etc.)"
-                rows="2"
-                value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none transition text-sm resize-none"
-              />
-              <p className="text-[10px] text-muted-foreground mt-1">
-                💬 Share any specific concerns or questions
-              </p>
-            </div>
-
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-gradient-gold text-deep-green py-2.5 rounded-lg font-semibold text-sm hover:shadow-lg transition-all transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70"
+              className="mt-7 w-full rounded-full bg-gradient-to-r from-[#d6a22e] to-[#f5d76e] py-4 text-[15px] font-semibold text-[#0b2f1d] transition-all duration-300 hover:shadow-lg disabled:opacity-70"
             >
               {isSubmitting ? (
                 <div className="flex items-center justify-center gap-2">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-deep-green border-t-transparent"></div>
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#0b2f1d] border-t-transparent"></div>
                   Processing...
                 </div>
               ) : (
                 "Book ₹499 Clarity Session →"
               )}
             </button>
+
+            {/* Trust Badge */}
+            <p className="mt-4 text-center text-[10px] text-[#6b756c]">
+              🔒 Secure & Confidential • No spam • ₹499 only
+            </p>
           </form>
-
-          {/* Trust Badge */}
-          <p className="text-center text-[10px] text-muted-foreground mt-3">
-            🔒 Secure & Confidential • No spam
-          </p>
         </div>
-
-        {/* Bottom Pattern */}
-        <div className="h-0.5 bg-gradient-gold/20"></div>
       </div>
-
-      <style jsx>{`
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-        
-        @keyframes scale-up {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-        
-        .animate-fade-in {
-          animation: fade-in 0.3s ease-out;
-        }
-        
-        .animate-scale-up {
-          animation: scale-up 0.3s ease-out;
-        }
-      `}</style>
     </div>
   );
 }
