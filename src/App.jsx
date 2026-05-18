@@ -548,6 +548,8 @@ function Phases() {
 }
 
 function WhatYouGet() {
+  const [open, setOpen] = useState(false);
+
   const items = [
     "Structured child assessment",
     "Neuro-development gap analysis",
@@ -555,35 +557,67 @@ function WhatYouGet() {
     "Personalized 3–6 month roadmap",
     "Clear direction before treatment",
   ];
+
   return (
-    <section className="py-24 bg-cream">
-      <div className="max-w-6xl mx-auto px-6 lg:px-12 grid lg:grid-cols-2 gap-16 items-center">
-        <div>
-          <SectionLabel>Inside the ₹499 Clarity Session</SectionLabel>
-          <h2 className="mt-6 text-3xl md:text-4xl lg:text-5xl text-deep-green">
-            What you receive in the Clarity Session
-          </h2>
-          <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-            You don't need more therapies. <span className="text-deep-green font-medium">You need the right direction.</span>
-          </p>
-          <PrimaryCTA className="mt-10" />
+    <>
+      <section className="py-24 bg-cream">
+        <div className="max-w-6xl mx-auto px-6 lg:px-12 grid lg:grid-cols-2 gap-16 items-center">
+          
+          <div>
+            <SectionLabel>
+              Inside the ₹499 Clarity Session
+            </SectionLabel>
+
+            <h2 className="mt-6 text-3xl md:text-4xl lg:text-5xl text-deep-green">
+              What you receive in the Clarity Session
+            </h2>
+
+            <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
+              You don't need more therapies.
+              <span className="text-deep-green font-medium">
+                {" "}You need the right direction.
+              </span>
+            </p>
+
+            {/* Open Modal */}
+            <button
+              onClick={() => setOpen(true)}
+              className="mt-10 rounded-full bg-deep-green px-8 py-4 text-white font-medium hover:opacity-90 transition"
+            >
+              Book Neuro Assessment Development Test
+            </button>
+          </div>
+
+          <div className="bg-card rounded-2xl p-10 shadow-soft border border-border">
+            <ul className="space-y-5">
+              {items.map((it, i) => (
+                <li
+                  key={it}
+                  className="flex items-start gap-4 pb-5 border-b border-border last:border-0 last:pb-0"
+                >
+                  <div className="h-8 w-8 rounded-full bg-deep-green text-gold flex items-center justify-center text-sm font-medium flex-shrink-0">
+                    {i + 1}
+                  </div>
+
+                  <div className="text-deep-green text-lg pt-0.5">
+                    {it}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-        <div className="bg-card rounded-2xl p-10 shadow-soft border border-border">
-          <ul className="space-y-5">
-            {items.map((it, i) => (
-              <li key={it} className="flex items-start gap-4 pb-5 border-b border-border last:border-0 last:pb-0">
-                <div className="h-8 w-8 rounded-full bg-deep-green text-gold flex items-center justify-center text-sm font-medium flex-shrink-0">
-                  {i + 1}
-                </div>
-                <div className="text-deep-green text-lg pt-0.5">{it}</div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </section>
+      </section>
+
+      {/* Same Modal */}
+      <AutismBookingModal
+        open={open}
+        setOpen={setOpen}
+      />
+    </>
   );
 }
+
 
 function Authority() {
   const roles = [
@@ -1432,148 +1466,84 @@ function Expectation() {
 
 function Pricing() {
   const [open, setOpen] = useState(false);
+
   return (
     <>
-    <section id="book" className="py-28">
-      <div className="max-w-4xl mx-auto px-6 lg:px-12">
-        <div className="text-center">
-          <SectionLabel>The Clarity Session</SectionLabel>
-          <h2 className="mt-6 text-3xl md:text-4xl lg:text-5xl text-deep-green">
-            Understand before you decide.
-          </h2>
-        </div>
-        <div className="mt-12 rounded-3xl bg-gradient-hero text-primary-foreground p-10 lg:p-14 shadow-luxury relative overflow-hidden">
-          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url(${neuralBg})`, backgroundSize: "cover" }} />
-          <div className="relative">
-            <div className="text-xs uppercase tracking-[0.3em] text-gold">Neuro-Development Clarity Session</div>
-            <div className="mt-6 flex items-baseline gap-4">
-              <div className="font-display text-6xl text-gold">₹499</div>
-              <div className="text-lg text-primary-foreground/60 line-through">₹2000+</div>
-            </div>
-            <p className="mt-4 text-primary-foreground/80">
-              Assessment typically costs ₹2000+. The Clarity Session is intentionally accessible —
-              so you can understand before you decide anything.
-            </p>
-            <div className="gold-divider my-8" />
-            <ul className="space-y-3">
-              {["Structured child assessment", "Neuro-development gap analysis", "Root cause clarity", "Personalized 3–6 month roadmap"].map((x) => (
-                <li key={x} className="flex items-center gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-gold flex-shrink-0" />
-                  {x}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-              <a
-  onClick={() => setOpen(true)}
-  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-gold text-deep-green px-8 py-4 font-medium hover:shadow-luxury hover:-translate-y-0.5 transition-all"
->
-  Book Neuro Assessment Development Test
-</a>
-              <div className="flex items-center gap-2 text-sm text-gold">
-                <Clock className="h-4 w-4" /> Limited slots this week
+      <section id="book" className="py-28">
+        <div className="max-w-4xl mx-auto px-6 lg:px-12">
+          <div className="text-center">
+            <SectionLabel>The Clarity Session</SectionLabel>
+
+            <h2 className="mt-6 text-3xl md:text-4xl lg:text-5xl text-deep-green">
+              Understand before you decide.
+            </h2>
+          </div>
+
+          <div className="mt-12 rounded-3xl bg-gradient-hero text-primary-foreground p-10 lg:p-14 shadow-luxury relative overflow-hidden">
+            <div
+              className="absolute inset-0 opacity-10"
+              style={{
+                backgroundImage: `url(${neuralBg})`,
+                backgroundSize: "cover",
+              }}
+            />
+
+            <div className="relative">
+              <div className="text-xs uppercase tracking-[0.3em] text-gold">
+                Neuro-Development Clarity Session
+              </div>
+
+              <div className="mt-6 flex items-baseline gap-4">
+                <div className="font-display text-6xl text-gold">₹499</div>
+                <div className="text-lg text-primary-foreground/60 line-through">
+                  ₹2000+
+                </div>
+              </div>
+
+              <p className="mt-4 text-primary-foreground/80">
+                Assessment typically costs ₹2000+. The Clarity Session is
+                intentionally accessible — so you can understand before you
+                decide anything.
+              </p>
+
+              <div className="gold-divider my-8" />
+
+              <ul className="space-y-3">
+                {[
+                  "Structured child assessment",
+                  "Neuro-development gap analysis",
+                  "Root cause clarity",
+                  "Personalized 3–6 month roadmap",
+                ].map((x) => (
+                  <li key={x} className="flex items-center gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-gold flex-shrink-0" />
+                    {x}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-10 flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                <button
+                  type="button"
+                  onClick={() => setOpen(true)}
+                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-gold text-deep-green px-8 py-4 font-medium hover:shadow-luxury hover:-translate-y-0.5 transition-all"
+                >
+                  Book Neuro Assessment Development Test
+                </button>
+
+                <div className="flex items-center gap-2 text-sm text-gold">
+                  <Clock className="h-4 w-4" /> Limited slots this week
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-    {open && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-    
-    <div className="bg-white rounded-2xl w-full max-w-2xl p-6 relative shadow-xl">
-      
-      {/* Close Button */}
-      <button
-        onClick={() => setOpen(false)}
-        className="absolute top-3 right-3 text-gray-500 hover:text-black"
-      >
-        ✕
-      </button>
+      </section>
 
-      <h3 className="text-xl font-semibold mb-4">Book Your Session</h3>
-
-      {/* FORM */}
-      <form
-        onSubmit={async (e) => {
-    e.preventDefault();
-
-    const form = e.target;
-
-    const data = {
-      name: form.name.value,
-      phone: form.phone.value,
-      email: form.email.value,
-      location: form.location?.value || "",
-      message: form.message?.value || "",
-    };
-
-    try {
-      await fetch("https://api.drankushgarg.com/api/appointments/book", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      
-      window.location.href = "https://rzp.io/rzp/ydaKYJsq";
-
-    } catch (err) {
-      alert("Submission failed");
-    }
-  }}
-        className="grid grid-cols-1 md:grid-cols-2 gap-4"
-      >
-        <input
-        name="name"
-          type="text"
-          placeholder="Full Name"
-          required
-          className="border p-3 rounded-lg"
-        />
-        <input
-        name="email"
-          type="email"
-          placeholder="Email Address"
-          required
-          className="border p-3 rounded-lg"
-        />
-        <input
-        name="phone"
-          type="tel"
-          placeholder="Phone Number"
-          required
-          className="border p-3 rounded-lg"
-        />
-        <input
-        name="location"
-          type="text"
-          placeholder="Address"
-          className="border p-3 rounded-lg"
-        />
-
-        <textarea
-        name="message"
-          placeholder="Message / Note"
-          className="border p-3 rounded-lg col-span-1 md:col-span-2"
-        />
-
-        <button
-          type="submit"
-          className="col-span-1 md:col-span-2 bg-gold text-white py-3 rounded-lg hover:bg-gold"
-        >
-          Submit & Proceed to Payment
-        </button>
-      </form>
-    </div>
-  </div>
-)}
+      <AutismBookingModal open={open} setOpen={setOpen} />
     </>
   );
 }
-
 function Decision() {
   const [openBooking, setOpenBooking] = useState(false);
 
@@ -1771,64 +1741,28 @@ function Footer() {
 }
 
 function StickyMobileCTA() {
-   const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+
   return (
-      <>
+    <>
       {/* Sticky Button */}
       <div className="fixed bottom-0 inset-x-0 z-30 md:hidden p-4 bg-background/100 backdrop-blur border-t border-border">
         <button
           onClick={() => setOpen(true)}
           className="flex items-center justify-center gap-2 w-full rounded-full bg-deep-green text-primary-foreground py-3.5 font-medium"
         >
-         
           Book Neuro Assessment Development Test
         </button>
       </div>
 
-      {/* Modal */}
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-          <div className="bg-white rounded-2xl w-full max-w-2xl p-6 relative shadow-xl">
-
-            {/* Close */}
-            <button
-              onClick={() => setOpen(false)}
-              className="absolute top-3 right-3 text-gray-500"
-            >
-              ✕
-            </button>
-
-            <h3 className="text-xl font-semibold mb-4">Book Your Session</h3>
-
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                window.location.href = "https://rzp.io/rzp/ydaKYJsq";
-              }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-4"
-            >
-              <input type="text" placeholder="Full Name" required className="border p-3 rounded-lg" />
-              <input type="email" placeholder="Email" required className="border p-3 rounded-lg" />
-              <input type="tel" placeholder="Phone" required className="border p-3 rounded-lg" />
-              <input type="text" placeholder="Address" className="border p-3 rounded-lg" />
-
-              <textarea
-                placeholder="Message / Note"
-                className="border p-3 rounded-lg md:col-span-2"
-              />
-
-              <button className="bg-gold text-white py-3 rounded-lg md:col-span-2">
-                Submit & Proceed to Payment
-              </button>
-            </form>
-
-          </div>
-        </div>
-      )}
+      {/* Existing Autism Modal */}
+      <AutismBookingModal
+        open={open}
+        setOpen={setOpen}
+      />
     </>
   );
 }
-
 function WhatsAppFloat() {
   const [show, setShow] = useState(false);
   useEffect(() => {
