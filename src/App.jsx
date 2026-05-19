@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   Brain, CheckCircle2, Sparkles, Calendar, ShieldCheck, Compass, User, Mail, Phone,
-  MapPin, PlayCircle, Quote, ChevronDown, MessageCircle, X, Star, Users, Clock,
+  MapPin, PlayCircle, Quote, ChevronDown, MessageCircle, X, Star, Users, Clock, ChevronLeft, ChevronRight,
   AlertCircle, Video, Building, Clock as ClockIcon
 } from "lucide-react";
 
@@ -1763,6 +1763,10 @@ function StickyMobileCTA() {
     </>
   );
 }
+
+
+
+
 function WhatsAppFloat() {
   const [show, setShow] = useState(false);
   useEffect(() => {
@@ -1784,10 +1788,13 @@ function WhatsAppFloat() {
   );
 }
 
-
 function WelcomePopup({ isOpen, onClose }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [shouldShowPopup, setShouldShowPopup] = useState(true);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -1801,6 +1808,7 @@ function WelcomePopup({ isOpen, onClose }) {
   });
 
   const [errors, setErrors] = useState({});
+  const [submittedData, setSubmittedData] = useState(null);
 
   const API_URL = "http://localhost:5008/api/autism-kraya-lead";
 
@@ -1813,8 +1821,147 @@ function WelcomePopup({ isOpen, onClose }) {
     "11:50-12:00 PM",
   ];
 
+  // Allowed days: Tuesday (2), Thursday (4), Saturday (6)
+  const allowedDays = [2, 4, 6];
+
+  // Check if date is allowed
+  const isDateAllowed = (date) => {
+    const dayOfWeek = date.getDay();
+    return allowedDays.includes(dayOfWeek);
+  };
+
+  // Get available dates for display
+  const getAvailableDatesDisplay = () => {
+    const dates = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    for (let i = 0; i < 60; i++) {
+      const checkDate = new Date(today);
+      checkDate.setDate(today.getDate() + i);
+      if (isDateAllowed(checkDate)) {
+        dates.push(checkDate);
+        if (dates.length >= 6) break;
+      }
+    }
+    
+    return dates;
+  };
+
+  // Generate calendar days
+  const getCalendarDays = () => {
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+    
+    const startingDayOfWeek = firstDayOfMonth.getDay();
+    const daysInMonth = lastDayOfMonth.getDate();
+    
+    const calendarDays = [];
+    
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      calendarDays.push(null);
+    }
+    
+    for (let i = 1; i <= daysInMonth; i++) {
+      const date = new Date(year, month, i);
+      calendarDays.push(date);
+    }
+    
+    return calendarDays;
+  };
+
+  // Format date for display
+  const formatDate = (date) => {
+    if (!date) return "";
+    const day = date.getDate();
+    const month = date.toLocaleString('default', { month: 'short' });
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  // Format date for API
+  const formatDateForAPI = (date) => {
+    if (!date) return "";
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  // Format date for display in success message
+  const formatDisplayDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleString('default', { month: 'long' });
+    const year = date.getFullYear();
+    return `${day} ${month}, ${year}`;
+  };
+
+  const handleDateSelect = (date) => {
+    if (date && isDateAllowed(date)) {
+      setFormData(prev => ({
+        ...prev,
+        date: formatDateForAPI(date)
+      }));
+      setShowCalendar(false);
+      if (errors.date) {
+        setErrors(prev => ({ ...prev, date: "" }));
+      }
+    }
+  };
+
+  const prevMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
+  };
+
+  const nextMonth = () => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
+  };
+
+  const isToday = (date) => {
+    if (!date) return false;
+    const today = new Date();
+    return date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear();
+  };
+
+  const isSelected = (date) => {
+    if (!date || !formData.date) return false;
+    return formatDateForAPI(date) === formData.date;
+  };
+
+  // Check if form was already submitted on component mount
   useEffect(() => {
-    if (isOpen) {
+    const alreadySubmitted = localStorage.getItem("welcomePopupSubmitted");
+    const savedFormData = localStorage.getItem("welcomePopupFormData");
+    
+    if (alreadySubmitted === "true" && savedFormData) {
+      setIsSubmitted(true);
+      setShouldShowPopup(false);
+      try {
+        const parsedData = JSON.parse(savedFormData);
+        setSubmittedData(parsedData);
+      } catch (e) {
+        console.error("Error parsing saved data:", e);
+      }
+      // Don't show popup if already submitted
+      if (onClose) {
+        onClose();
+      }
+    }
+  }, []);
+
+  // Control body scroll and popup visibility
+  useEffect(() => {
+    // Only show popup if not submitted and isOpen is true
+    const shouldOpen = isOpen && !isSubmitted && shouldShowPopup;
+    
+    if (shouldOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
@@ -1823,7 +1970,19 @@ function WelcomePopup({ isOpen, onClose }) {
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [isOpen]);
+  }, [isOpen, isSubmitted, shouldShowPopup]);
+
+  // Close calendar when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (showCalendar && !e.target.closest('.calendar-container')) {
+        setShowCalendar(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showCalendar]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -1846,7 +2005,12 @@ function WelcomePopup({ isOpen, onClose }) {
     }
 
     if (!formData.date) {
-      newErrors.date = "Date is required";
+      newErrors.date = "Date is required (Tuesday, Thursday, or Saturday only)";
+    } else {
+      const selectedDate = new Date(formData.date);
+      if (!isDateAllowed(selectedDate)) {
+        newErrors.date = "Please select Tuesday, Thursday, or Saturday";
+      }
     }
 
     if (!formData.time) {
@@ -1901,11 +2065,6 @@ function WelcomePopup({ isOpen, onClose }) {
     }
   };
 
-  const getMinDate = () => {
-    const today = new Date();
-    return today.toISOString().split("T")[0];
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -1921,10 +2080,11 @@ function WelcomePopup({ isOpen, onClose }) {
 
     try {
       const cleanPhone = formData.phone.replace(/\D/g, "");
+      const formattedPhone = `+91${cleanPhone}`;
 
       const payload = {
         name: formData.name.trim(),
-        phone: cleanPhone,
+        phone: formattedPhone,
         email: formData.email.trim(),
         notes: `
 Service: ₹499 Clarity Session
@@ -1952,14 +2112,28 @@ Message: ${formData.message || "N/A"}
         throw new Error(data.message || "Kraya lead submit failed");
       }
 
-      localStorage.setItem("popupSubmitted", "true");
+      // Save submitted data
+      const submissionData = {
+        name: formData.name,
+        email: formData.email,
+        phone: formattedPhone,
+        date: formData.date,
+        time: formData.time,
+        mode: formData.mode,
+        address: formData.address,
+        message: formData.message
+      };
+      
+      setSubmittedData(submissionData);
+      setIsSubmitted(true);
+      setShouldShowPopup(false);
+      
+      // Store in localStorage
+      localStorage.setItem("welcomePopupSubmitted", "true");
+      localStorage.setItem("welcomePopupFormData", JSON.stringify(submissionData));
       localStorage.setItem("userName", formData.name);
       localStorage.setItem("userEmail", formData.email);
-      localStorage.setItem("welcomePopupFormData", JSON.stringify(payload));
-
-      onClose();
-
-      window.location.href = "/";
+      
     } catch (err) {
       console.error("Kraya submit error:", err);
       setSubmitError(err.message || "Something went wrong. Please try again.");
@@ -1968,21 +2142,102 @@ Message: ${formData.message || "N/A"}
     }
   };
 
-  if (!isOpen) return null;
+  const handleClose = () => {
+    if (isSubmitted) {
+      onClose();
+    }
+  };
 
-  return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4">
-      <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-[28px] bg-white shadow-2xl">
-        <div className="sticky top-0 z-10 flex justify-end bg-white pt-4 pr-4">
-          <button
-            type="button"
-            onClick={() => onClose()}
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f5f2ea] text-[#0b2f1d] hover:bg-[#e8dfd0] transition-colors"
-          >
-            <X className="h-5 w-5" />
-          </button>
+  const handleBackToHome = () => {
+    // Just close the popup without refreshing the page
+    onClose();
+  };
+
+  const availableDates = getAvailableDatesDisplay();
+
+  // Don't render anything if popup should not be shown
+  if (!isOpen || (isSubmitted && !shouldShowPopup)) return null;
+
+  // Show submitted success view
+  if (isSubmitted && submittedData) {
+    const displayData = submittedData;
+    
+    return (
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4">
+        <div className="relative w-full max-w-md rounded-[28px] bg-white shadow-2xl p-8 text-center">
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={handleClose}
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f5f2ea] text-[#0b2f1d] hover:bg-[#e8dfd0] transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="mt-2">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+              <svg
+                className="h-8 w-8 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+
+            <h3 className="font-serif text-2xl font-bold text-[#0b2f1d]">
+              Thank You, {displayData.name?.split(" ")[0] || "User"}! 🎉
+            </h3>
+
+            <p className="mt-2 text-[#6b756c]">
+              Your ₹499 Clarity Session is confirmed!
+            </p>
+
+            <div className="mt-4 rounded-xl bg-[#fbfaf7] p-4 text-left border border-[#e5ddcf]">
+              <p className="text-sm font-semibold text-[#0b2f1d]">
+                Session Details:
+              </p>
+              <div className="mt-2 space-y-1 text-xs text-[#6b756c]">
+                <p>📅 Date: {formatDisplayDate(displayData.date)}</p>
+                <p>⏰ Time: {displayData.time}</p>
+                <p>💻 Mode: {displayData.mode === "online" ? "Online" : "Clinic Visit"}</p>
+              </div>
+            </div>
+
+            <p className="mt-4 text-xs text-[#6b756c]">
+              We'll send you the calendar invite and payment link via WhatsApp/Email within 2 hours.
+            </p>
+
+            <button
+              onClick={handleBackToHome}
+              className="mt-6 w-full rounded-full bg-gradient-to-r from-[#d6a22e] to-[#f5d76e] py-3 text-sm font-semibold text-[#0b2f1d] transition-all duration-300 hover:shadow-lg"
+            >
+              Continue to Website
+            </button>
+          </div>
         </div>
+      </div>
+    );
+  }
 
+  // Main form view
+  return (
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget && isSubmitted) {
+          handleClose();
+        }
+      }}
+    >
+      <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-[28px] bg-white shadow-2xl">
         <div className="px-5 pb-7 sm:px-7">
           <div className="flex flex-col items-center text-center">
             <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#d6a22e] to-[#f5d76e]">
@@ -1994,7 +2249,7 @@ Message: ${formData.message || "N/A"}
             </h3>
 
             <p className="mt-1 text-[13px] text-[#6b756c]">
-              Limited slots this week
+              Limited slots this week (Tue, Thu, Sat only)
             </p>
           </div>
 
@@ -2022,7 +2277,7 @@ Message: ${formData.message || "N/A"}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                 <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
-                  Full Name
+                  Full Name *
                 </label>
 
                 <div className="relative">
@@ -2033,6 +2288,7 @@ Message: ${formData.message || "N/A"}
                     placeholder="Enter your name"
                     value={formData.name}
                     onChange={handleChange}
+                    required
                     className={`w-full rounded-2xl border px-10 py-3 text-sm outline-none transition-all focus:border-[#d6a22e] ${
                       errors.name
                         ? "border-red-400 bg-red-50"
@@ -2050,7 +2306,7 @@ Message: ${formData.message || "N/A"}
 
               <div>
                 <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
-                  Email Address
+                  Email Address *
                 </label>
 
                 <div className="relative">
@@ -2061,6 +2317,7 @@ Message: ${formData.message || "N/A"}
                     placeholder="Enter your email"
                     value={formData.email}
                     onChange={handleChange}
+                    required
                     className={`w-full rounded-2xl border px-10 py-3 text-sm outline-none transition-all focus:border-[#d6a22e] ${
                       errors.email
                         ? "border-red-400 bg-red-50"
@@ -2078,7 +2335,7 @@ Message: ${formData.message || "N/A"}
 
               <div>
                 <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
-                  Phone Number
+                  Phone Number *
                 </label>
 
                 <div className="relative">
@@ -2090,6 +2347,7 @@ Message: ${formData.message || "N/A"}
                     placeholder="Enter your phone number"
                     value={formData.phone}
                     onChange={handleChange}
+                    required
                     className={`w-full rounded-2xl border px-10 py-3 text-sm outline-none transition-all focus:border-[#d6a22e] ${
                       errors.phone
                         ? "border-red-400 bg-red-50"
@@ -2105,20 +2363,22 @@ Message: ${formData.message || "N/A"}
                 )}
               </div>
 
-              <div>
+              {/* Date Field with Custom Calendar */}
+              <div className="relative calendar-container">
                 <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
-                  Select Date
+                  Select Date (Tue, Thu, Sat only) *
                 </label>
 
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b756c]" />
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b756c] z-10" />
+                  
                   <input
-                    type="date"
-                    name="date"
-                    value={formData.date}
-                    onChange={handleChange}
-                    min={getMinDate()}
-                    className={`w-full rounded-2xl border px-10 py-3 text-sm outline-none transition-all focus:border-[#d6a22e] ${
+                    type="text"
+                    placeholder="Select a date"
+                    value={formData.date ? formatDate(new Date(formData.date)) : ""}
+                    onFocus={() => setShowCalendar(true)}
+                    readOnly
+                    className={`w-full rounded-2xl border px-10 py-3 text-sm outline-none transition-all focus:border-[#d6a22e] cursor-pointer ${
                       errors.date
                         ? "border-red-400 bg-red-50"
                         : "border-[#e5ddcf] bg-[#fbfaf7]"
@@ -2126,10 +2386,90 @@ Message: ${formData.message || "N/A"}
                   />
                 </div>
 
-                {errors.date && (
-                  <p className="mt-1 text-[11px] text-red-500">
-                    {errors.date}
+                {/* Custom Calendar Dropdown */}
+                {showCalendar && (
+                  <div className="absolute z-20 mt-2 w-full bg-white rounded-2xl border border-[#e5ddcf] shadow-xl p-4" style={{ minWidth: '280px' }}>
+                    <div className="flex items-center justify-between mb-4">
+                      <button
+                        type="button"
+                        onClick={prevMonth}
+                        className="p-1 hover:bg-[#f5f2ea] rounded-full transition-colors"
+                      >
+                        <ChevronLeft className="w-5 h-5 text-[#0b2f1d]" />
+                      </button>
+                      
+                      <span className="font-semibold text-[#0b2f1d]">
+                        {currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}
+                      </span>
+                      
+                      <button
+                        type="button"
+                        onClick={nextMonth}
+                        className="p-1 hover:bg-[#f5f2ea] rounded-full transition-colors"
+                      >
+                        <ChevronRight className="w-5 h-5 text-[#0b2f1d]" />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-7 gap-1 mb-2">
+                      {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
+                        <div key={day} className="text-center text-xs font-medium text-[#6b756c] py-2">
+                          {day}
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="grid grid-cols-7 gap-1">
+                      {getCalendarDays().map((date, index) => {
+                        if (!date) {
+                          return <div key={`empty-${index}`} className="p-2"></div>;
+                        }
+                        
+                        const allowed = isDateAllowed(date);
+                        const selected = isSelected(date);
+                        const today = isToday(date);
+                        
+                        return (
+                          <button
+                            key={date.toISOString()}
+                            type="button"
+                            onClick={() => handleDateSelect(date)}
+                            disabled={!allowed}
+                            className={`
+                              p-2 text-center rounded-xl transition-all text-sm
+                              ${!allowed && 'opacity-30 cursor-not-allowed bg-gray-100 line-through'}
+                              ${allowed && !selected && 'hover:bg-[#d6a22e]/20 cursor-pointer bg-[#d6a22e]/5'}
+                              ${selected && 'bg-[#d6a22e] text-white font-semibold'}
+                              ${today && !selected && allowed && 'border border-[#d6a22e]'}
+                            `}
+                          >
+                            {date.getDate()}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <div className="mt-4 pt-3 border-t border-[#e5ddcf] flex items-center justify-center gap-4 text-xs">
+                      <div className="flex items-center gap-1">
+                        <div className="w-3 h-3 rounded-full bg-[#d6a22e]"></div>
+                        <span className="text-[#6b756c]">Available (Tue, Thu, Sat)</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="w-3 h-3 rounded-full bg-gray-200"></div>
+                        <span className="text-[#6b756c]">Not Available</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {availableDates.length > 0 && !formData.date && (
+                  <p className="mt-2 text-[11px] text-[#d6a22e]">
+                    Next available: {availableDates.slice(0, 3).map(d => formatDate(d)).join(", ")}
                   </p>
+                )}
+
+                {errors.date && (
+                  <p className="mt-1 text-[11px] text-red-500">{errors.date}</p>
                 )}
               </div>
 
@@ -2150,13 +2490,13 @@ Message: ${formData.message || "N/A"}
 
               <div>
                 <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
-                  Message / Note
+                  Child's Age & Concern
                 </label>
 
                 <input
                   name="message"
                   type="text"
-                  placeholder="Child age, concern, etc."
+                  placeholder="e.g., 4 years, speech delay"
                   value={formData.message}
                   onChange={handleChange}
                   className="w-full rounded-2xl border border-[#e5ddcf] bg-[#fbfaf7] px-4 py-3 text-sm outline-none transition-all focus:border-[#d6a22e]"
@@ -2165,7 +2505,7 @@ Message: ${formData.message || "N/A"}
 
               <div className="md:col-span-2">
                 <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
-                  Consultation Mode
+                  Consultation Mode *
                 </label>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -2207,7 +2547,7 @@ Message: ${formData.message || "N/A"}
 
               <div className="md:col-span-2">
                 <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
-                  Select Time
+                  Select Time *
                 </label>
 
                 <div className="relative">
@@ -2216,6 +2556,7 @@ Message: ${formData.message || "N/A"}
                     name="time"
                     value={formData.time}
                     onChange={handleChange}
+                    required
                     className={`w-full rounded-2xl border px-10 py-3 text-sm outline-none appearance-none transition-all focus:border-[#d6a22e] ${
                       errors.time
                         ? "border-red-400 bg-red-50"
