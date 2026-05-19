@@ -1810,7 +1810,7 @@ function WelcomePopup({ isOpen, onClose }) {
   const [errors, setErrors] = useState({});
   const [submittedData, setSubmittedData] = useState(null);
 
-  const API_URL = "http://localhost:5008/api/autism-kraya-lead";
+  const API_URL = "https://autismapi.manovaidya.com/api/autism-kraya-lead";
 
   const timeSlots = [
     "11:00-11:10 AM",
