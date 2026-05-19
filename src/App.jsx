@@ -1797,12 +1797,13 @@ function WelcomePopup({ isOpen, onClose }) {
     time: "",
     mode: "online",
     address: "",
-    message: ""
+    message: "",
   });
 
   const [errors, setErrors] = useState({});
 
-  // Time slots (same as AutismBookingModal)
+  const API_URL = "http://localhost:5008/api/autism-kraya-lead";
+
   const timeSlots = [
     "11:00-11:10 AM",
     "11:10-11:20 AM",
@@ -1812,7 +1813,6 @@ function WelcomePopup({ isOpen, onClose }) {
     "11:50-12:00 PM",
   ];
 
-  // Prevent body scroll when popup is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -1827,6 +1827,7 @@ function WelcomePopup({ isOpen, onClose }) {
 
   const validateForm = () => {
     const newErrors = {};
+    const cleanPhone = formData.phone.replace(/\D/g, "");
 
     if (!formData.name.trim()) {
       newErrors.name = "Full name is required";
@@ -1838,10 +1839,10 @@ function WelcomePopup({ isOpen, onClose }) {
       newErrors.email = "Email is invalid";
     }
 
-    if (!formData.phone.trim()) {
+    if (!cleanPhone) {
       newErrors.phone = "Phone number is required";
-    } else if (!/^[\d\s+()-]{8,}$/.test(formData.phone)) {
-      newErrors.phone = "Valid phone number required";
+    } else if (cleanPhone.length !== 10) {
+      newErrors.phone = "Valid 10 digit phone number required";
     }
 
     if (!formData.date) {
@@ -1864,7 +1865,10 @@ function WelcomePopup({ isOpen, onClose }) {
 
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]:
+        name === "phone"
+          ? value.replace(/\D/g, "").slice(0, 10)
+          : value,
     }));
 
     if (errors[name]) {
@@ -1884,11 +1888,16 @@ function WelcomePopup({ isOpen, onClose }) {
       ...prev,
       mode,
     }));
+
     if (errors.mode) {
       setErrors((prev) => ({
         ...prev,
         mode: "",
       }));
+    }
+
+    if (submitError) {
+      setSubmitError("");
     }
   };
 
@@ -1911,50 +1920,49 @@ function WelcomePopup({ isOpen, onClose }) {
     setSubmitError("");
 
     try {
-      // Using the same API endpoint as AutismBookingModal
-      const response = await axios.post("/autism-bookings", {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        date: formData.date,
-        time: formData.time,
-        mode: formData.mode,
-        address: formData.address,
-        message: formData.message
+      const cleanPhone = formData.phone.replace(/\D/g, "");
+
+      const payload = {
+        name: formData.name.trim(),
+        phone: cleanPhone,
+        email: formData.email.trim(),
+        notes: `
+Service: ₹499 Clarity Session
+Date: ${formData.date}
+Time Slot: ${formData.time}
+Mode: ${formData.mode}
+Address: ${formData.address || "N/A"}
+Message: ${formData.message || "N/A"}
+        `,
+        stage: "New Lead",
+        pipeline: "Leads",
+      };
+
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       });
 
-      if (response.status === 200 || response.status === 201) {
-        localStorage.setItem("popupSubmitted", "true");
-        localStorage.setItem("userName", formData.name);
-        localStorage.setItem("userEmail", formData.email);
-        localStorage.setItem("autismBookingFormData", JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          date: formData.date,
-          time: formData.time,
-          mode: formData.mode,
-          address: formData.address,
-          message: formData.message
-        }));
+      const data = await response.json();
 
-        onClose();
-
-        // Redirect to payment page (same as AutismBookingModal)
-        window.location.href = "/";
-      } else {
-        setSubmitError(response.data.message || "Failed to submit form. Please try again.");
+      if (!response.ok) {
+        throw new Error(data.message || "Kraya lead submit failed");
       }
+
+      localStorage.setItem("popupSubmitted", "true");
+      localStorage.setItem("userName", formData.name);
+      localStorage.setItem("userEmail", formData.email);
+      localStorage.setItem("welcomePopupFormData", JSON.stringify(payload));
+
+      onClose();
+
+      window.location.href = "/";
     } catch (err) {
-      console.error("Booking error:", err);
-
-      if (err.response) {
-        setSubmitError(err.response.data.message || "Server error. Please try again.");
-      } else if (err.request) {
-        setSubmitError("No response from server. Please check your connection.");
-      } else {
-        setSubmitError("Something went wrong. Please try again.");
-      }
+      console.error("Kraya submit error:", err);
+      setSubmitError(err.message || "Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -1963,16 +1971,8 @@ function WelcomePopup({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) {
-          onClose();
-        }
-      }}
-    >
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4">
       <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-[28px] bg-white shadow-2xl">
-        {/* Close Button */}
         <div className="sticky top-0 z-10 flex justify-end bg-white pt-4 pr-4">
           <button
             type="button"
@@ -1983,9 +1983,7 @@ function WelcomePopup({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* Content */}
         <div className="px-5 pb-7 sm:px-7">
-          {/* Icon & Heading */}
           <div className="flex flex-col items-center text-center">
             <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#d6a22e] to-[#f5d76e]">
               <Sparkles className="h-7 w-7 text-[#0b2f1d]" />
@@ -2000,12 +1998,11 @@ function WelcomePopup({ isOpen, onClose }) {
             </p>
           </div>
 
-          {/* Benefits */}
           <div className="mt-4 space-y-2 rounded-2xl bg-[#fbfaf7] p-4 border border-[#e5ddcf]">
             {[
               "Structured child assessment",
               "Neuro-development gap analysis",
-              "Personalized roadmap"
+              "Personalized roadmap",
             ].map((benefit, i) => (
               <div key={i} className="flex items-center gap-2.5 text-sm">
                 <CheckCircle2 className="h-4 w-4 text-[#d6a22e] flex-shrink-0" />
@@ -2014,7 +2011,6 @@ function WelcomePopup({ isOpen, onClose }) {
             ))}
           </div>
 
-          {/* Error Message */}
           {submitError && (
             <div className="mt-4 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-3 text-[13px] text-red-700">
               <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
@@ -2022,10 +2018,8 @@ function WelcomePopup({ isOpen, onClose }) {
             </div>
           )}
 
-          {/* FORM - Same structure as AutismBookingModal */}
           <form onSubmit={handleSubmit} className="mt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* Name */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
                   Full Name
@@ -2033,7 +2027,6 @@ function WelcomePopup({ isOpen, onClose }) {
 
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b756c]" />
-
                   <input
                     name="name"
                     type="text"
@@ -2049,11 +2042,12 @@ function WelcomePopup({ isOpen, onClose }) {
                 </div>
 
                 {errors.name && (
-                  <p className="mt-1 text-[11px] text-red-500">{errors.name}</p>
+                  <p className="mt-1 text-[11px] text-red-500">
+                    {errors.name}
+                  </p>
                 )}
               </div>
 
-              {/* Email */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
                   Email Address
@@ -2061,7 +2055,6 @@ function WelcomePopup({ isOpen, onClose }) {
 
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b756c]" />
-
                   <input
                     name="email"
                     type="email"
@@ -2077,11 +2070,12 @@ function WelcomePopup({ isOpen, onClose }) {
                 </div>
 
                 {errors.email && (
-                  <p className="mt-1 text-[11px] text-red-500">{errors.email}</p>
+                  <p className="mt-1 text-[11px] text-red-500">
+                    {errors.email}
+                  </p>
                 )}
               </div>
 
-              {/* Phone */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
                   Phone Number
@@ -2089,10 +2083,10 @@ function WelcomePopup({ isOpen, onClose }) {
 
                 <div className="relative">
                   <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b756c]" />
-
                   <input
                     name="phone"
                     type="tel"
+                    maxLength={10}
                     placeholder="Enter your phone number"
                     value={formData.phone}
                     onChange={handleChange}
@@ -2105,11 +2099,12 @@ function WelcomePopup({ isOpen, onClose }) {
                 </div>
 
                 {errors.phone && (
-                  <p className="mt-1 text-[11px] text-red-500">{errors.phone}</p>
+                  <p className="mt-1 text-[11px] text-red-500">
+                    {errors.phone}
+                  </p>
                 )}
               </div>
 
-              {/* Date */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
                   Select Date
@@ -2117,7 +2112,6 @@ function WelcomePopup({ isOpen, onClose }) {
 
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b756c]" />
-
                   <input
                     type="date"
                     name="date"
@@ -2133,55 +2127,42 @@ function WelcomePopup({ isOpen, onClose }) {
                 </div>
 
                 {errors.date && (
-                  <p className="mt-1 text-[11px] text-red-500">{errors.date}</p>
+                  <p className="mt-1 text-[11px] text-red-500">
+                    {errors.date}
+                  </p>
                 )}
               </div>
 
-              {/* City / Location */}
-              {/* <div>
+              <div>
                 <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
                   City / Location
                 </label>
 
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b756c]" />
-
-                  <input
-                    name="address"
-                    type="text"
-                    placeholder="Enter your city"
-                    value={formData.address}
-                    onChange={handleChange}
-                    className="w-full rounded-2xl border border-[#e5ddcf] bg-[#fbfaf7] px-10 py-3 text-sm outline-none transition-all focus:border-[#d6a22e]"
-                  />
-                </div>
+                <input
+                  name="address"
+                  type="text"
+                  placeholder="Enter your city"
+                  value={formData.address}
+                  onChange={handleChange}
+                  className="w-full rounded-2xl border border-[#e5ddcf] bg-[#fbfaf7] px-4 py-3 text-sm outline-none transition-all focus:border-[#d6a22e]"
+                />
               </div>
 
-              {/* Message */}
-              {/* <div>
+              <div>
                 <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
                   Message / Note
-                </label> */}
-{/* 
-                <div className="relative">
-                  <MessageCircle className="absolute left-3 top-4 w-4 h-4 text-[#6b756c]" />
+                </label>
 
-                  <textarea
-                    name="message"
-                    placeholder="Share any specific concerns (child's age, challenges, etc.)"
-                    rows="3"
-                    value={formData.message}
-                    onChange={handleChange}
-                    className="w-full rounded-2xl border border-[#e5ddcf] bg-[#fbfaf7] px-10 py-3 text-sm outline-none transition-all focus:border-[#d6a22e] resize-none"
-                  />
-                </div>
+                <input
+                  name="message"
+                  type="text"
+                  placeholder="Child age, concern, etc."
+                  value={formData.message}
+                  onChange={handleChange}
+                  className="w-full rounded-2xl border border-[#e5ddcf] bg-[#fbfaf7] px-4 py-3 text-sm outline-none transition-all focus:border-[#d6a22e]"
+                />
+              </div>
 
-                <p className="mt-1 text-[10px] text-[#6b756c]">
-                  💬 Share any specific concerns or questions
-                </p>
-              </div> */} 
-
-              {/* Mode Selection - Full width */}
               <div className="md:col-span-2">
                 <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
                   Consultation Mode
@@ -2218,11 +2199,12 @@ function WelcomePopup({ isOpen, onClose }) {
                 </div>
 
                 {errors.mode && (
-                  <p className="mt-1 text-[11px] text-red-500">{errors.mode}</p>
+                  <p className="mt-1 text-[11px] text-red-500">
+                    {errors.mode}
+                  </p>
                 )}
               </div>
 
-              {/* Time - Full width */}
               <div className="md:col-span-2">
                 <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
                   Select Time
@@ -2230,7 +2212,6 @@ function WelcomePopup({ isOpen, onClose }) {
 
                 <div className="relative">
                   <ClockIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b756c]" />
-
                   <select
                     name="time"
                     value={formData.time}
@@ -2251,12 +2232,13 @@ function WelcomePopup({ isOpen, onClose }) {
                 </div>
 
                 {errors.time && (
-                  <p className="mt-1 text-[11px] text-red-500">{errors.time}</p>
+                  <p className="mt-1 text-[11px] text-red-500">
+                    {errors.time}
+                  </p>
                 )}
               </div>
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={isSubmitting}
@@ -2272,7 +2254,6 @@ function WelcomePopup({ isOpen, onClose }) {
               )}
             </button>
 
-            {/* Trust Badge */}
             <p className="mt-4 text-center text-[10px] text-[#6b756c]">
               🔒 Secure & Confidential • No spam • ₹499 only
             </p>
