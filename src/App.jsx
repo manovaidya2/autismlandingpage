@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
   Brain, CheckCircle2, Sparkles, Calendar, ShieldCheck, Compass, User, Mail, Phone,
   MapPin, PlayCircle, Quote, ChevronDown, MessageCircle, X, Star, Users, Clock, ChevronLeft, ChevronRight,
-  AlertCircle, Video, Building, Clock as ClockIcon
+  AlertCircle, Video,Send,CheckCircl ,Building, Clock as ClockIcon
 } from "lucide-react";
 
 // Import images (update paths as needed)
@@ -272,7 +272,7 @@ function VSL() {
           <div className="mt-12 aspect-video rounded-2xl overflow-hidden shadow-luxury">
             <iframe
               className="w-full h-full"
-              src="https://www.youtube.com/embed/ZpXSu4BIRiE"
+              src="https://www.youtube.com/embed/BJYLWrkwcJY"
               title="YouTube video player"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -1792,246 +1792,75 @@ function WelcomePopup({ isOpen, onClose }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [showCalendar, setShowCalendar] = useState(false);
-  const [shouldShowPopup, setShouldShowPopup] = useState(true);
 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    date: "",
-    time: "",
-    mode: "online",
-    address: "",
-    message: "",
   });
 
   const [errors, setErrors] = useState({});
-  const [submittedData, setSubmittedData] = useState(null);
 
-  const API_URL = "https://autismapi.manovaidya.com/api/autism-kraya-lead";
+  const API_URL =
+    "https://autismapi.manovaidya.com/api/autism-kraya-lead";
 
-  const timeSlots = [
-    "11:00-11:10 AM",
-    "11:10-11:20 AM",
-    "11:20-11:30 AM",
-    "11:30-11:40 AM",
-    "11:40-11:50 AM",
-    "11:50-12:00 PM",
-  ];
-
-  // Allowed days: Tuesday (2), Thursday (4), Saturday (6)
-  const allowedDays = [2, 4, 6];
-
-  // Check if date is allowed
-  const isDateAllowed = (date) => {
-    const dayOfWeek = date.getDay();
-    return allowedDays.includes(dayOfWeek);
-  };
-
-  // Get available dates for display
-  const getAvailableDatesDisplay = () => {
-    const dates = [];
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    for (let i = 0; i < 60; i++) {
-      const checkDate = new Date(today);
-      checkDate.setDate(today.getDate() + i);
-      if (isDateAllowed(checkDate)) {
-        dates.push(checkDate);
-        if (dates.length >= 6) break;
-      }
-    }
-    
-    return dates;
-  };
-
-  // Generate calendar days
-  const getCalendarDays = () => {
-    const year = currentMonth.getFullYear();
-    const month = currentMonth.getMonth();
-    
-    const firstDayOfMonth = new Date(year, month, 1);
-    const lastDayOfMonth = new Date(year, month + 1, 0);
-    
-    const startingDayOfWeek = firstDayOfMonth.getDay();
-    const daysInMonth = lastDayOfMonth.getDate();
-    
-    const calendarDays = [];
-    
-    for (let i = 0; i < startingDayOfWeek; i++) {
-      calendarDays.push(null);
-    }
-    
-    for (let i = 1; i <= daysInMonth; i++) {
-      const date = new Date(year, month, i);
-      calendarDays.push(date);
-    }
-    
-    return calendarDays;
-  };
-
-  // Format date for display
-  const formatDate = (date) => {
-    if (!date) return "";
-    const day = date.getDate();
-    const month = date.toLocaleString('default', { month: 'short' });
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
-
-  // Format date for API
-  const formatDateForAPI = (date) => {
-    if (!date) return "";
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-
-  // Format date for display in success message
-  const formatDisplayDate = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.toLocaleString('default', { month: 'long' });
-    const year = date.getFullYear();
-    return `${day} ${month}, ${year}`;
-  };
-
-  const handleDateSelect = (date) => {
-    if (date && isDateAllowed(date)) {
-      setFormData(prev => ({
-        ...prev,
-        date: formatDateForAPI(date)
-      }));
-      setShowCalendar(false);
-      if (errors.date) {
-        setErrors(prev => ({ ...prev, date: "" }));
-      }
-    }
-  };
-
-  const prevMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
-  };
-
-  const nextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
-  };
-
-  const isToday = (date) => {
-    if (!date) return false;
-    const today = new Date();
-    return date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear();
-  };
-
-  const isSelected = (date) => {
-    if (!date || !formData.date) return false;
-    return formatDateForAPI(date) === formData.date;
-  };
-
-  // Check if form was already submitted on component mount
   useEffect(() => {
-    const alreadySubmitted = localStorage.getItem("welcomePopupSubmitted");
-    const savedFormData = localStorage.getItem("welcomePopupFormData");
-    
-    if (alreadySubmitted === "true" && savedFormData) {
-      setIsSubmitted(true);
-      setShouldShowPopup(false);
-      try {
-        const parsedData = JSON.parse(savedFormData);
-        setSubmittedData(parsedData);
-      } catch (e) {
-        console.error("Error parsing saved data:", e);
-      }
-      // Don't show popup if already submitted
-      if (onClose) {
-        onClose();
-      }
-    }
-  }, []);
-
-  // Control body scroll and popup visibility
-  useEffect(() => {
-    // Only show popup if not submitted and isOpen is true
-    const shouldOpen = isOpen && !isSubmitted && shouldShowPopup;
-    
-    if (shouldOpen) {
+    if (isOpen) {
       document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
     }
 
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [isOpen, isSubmitted, shouldShowPopup]);
-
-  // Close calendar when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (showCalendar && !e.target.closest('.calendar-container')) {
-        setShowCalendar(false);
-      }
-    };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showCalendar]);
+  }, [isOpen]);
 
   const validateForm = () => {
     const newErrors = {};
-    const cleanPhone = formData.phone.replace(/\D/g, "");
+
+    const cleanPhone =
+      formData.phone.replace(/\D/g, "");
 
     if (!formData.name.trim()) {
-      newErrors.name = "Full name is required";
+      newErrors.name =
+        "Full name is required";
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
+      newErrors.email =
+        "Email is required";
+    } else if (
+      !/\S+@\S+\.\S+/.test(
+        formData.email
+      )
+    ) {
+      newErrors.email =
+        "Invalid email";
     }
 
     if (!cleanPhone) {
-      newErrors.phone = "Phone number is required";
-    } else if (cleanPhone.length !== 10) {
-      newErrors.phone = "Valid 10 digit phone number required";
-    }
-
-    if (!formData.date) {
-      newErrors.date = "Date is required (Tuesday, Thursday, or Saturday only)";
-    } else {
-      const selectedDate = new Date(formData.date);
-      if (!isDateAllowed(selectedDate)) {
-        newErrors.date = "Please select Tuesday, Thursday, or Saturday";
-      }
-    }
-
-    if (!formData.time) {
-      newErrors.time = "Time slot is required";
-    }
-
-    if (!formData.mode) {
-      newErrors.mode = "Please select consultation mode";
+      newErrors.phone =
+        "Phone number required";
+    } else if (
+      cleanPhone.length !== 10
+    ) {
+      newErrors.phone =
+        "Enter valid 10 digit number";
     }
 
     return newErrors;
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value } =
+      e.target;
 
     setFormData((prev) => ({
       ...prev,
       [name]:
         name === "phone"
-          ? value.replace(/\D/g, "").slice(0, 10)
+          ? value
+              .replace(/\D/g, "")
+              .slice(0, 10)
           : value,
     }));
 
@@ -2041,565 +1870,219 @@ function WelcomePopup({ isOpen, onClose }) {
         [name]: "",
       }));
     }
-
-    if (submitError) {
-      setSubmitError("");
-    }
-  };
-
-  const handleModeSelect = (mode) => {
-    setFormData((prev) => ({
-      ...prev,
-      mode,
-    }));
-
-    if (errors.mode) {
-      setErrors((prev) => ({
-        ...prev,
-        mode: "",
-      }));
-    }
-
-    if (submitError) {
-      setSubmitError("");
-    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const newErrors = validateForm();
+    const validation =
+      validateForm();
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+    if (
+      Object.keys(validation)
+        .length > 0
+    ) {
+      setErrors(validation);
       return;
     }
 
     setIsSubmitting(true);
-    setSubmitError("");
 
     try {
-      const cleanPhone = formData.phone.replace(/\D/g, "");
-      const formattedPhone = `+91${cleanPhone}`;
-
       const payload = {
         name: formData.name.trim(),
-        phone: formattedPhone,
-        email: formData.email.trim(),
-        notes: `
-Service: ₹499 Clarity Session
-Date: ${formData.date}
-Time Slot: ${formData.time}
-Mode: ${formData.mode}
-Address: ${formData.address || "N/A"}
-Message: ${formData.message || "N/A"}
-        `,
+        phone: `+91${formData.phone}`,
+        email:
+          formData.email.trim(),
+
         stage: "New Lead",
         pipeline: "Leads",
       };
 
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const response =
+        await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
+          body: JSON.stringify(
+            payload
+          ),
+        });
 
-      const data = await response.json();
+      const data =
+        await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || "Kraya lead submit failed");
+        throw new Error(
+          data.message ||
+            "Submit failed"
+        );
       }
 
-      // Save submitted data
-      const submissionData = {
-        name: formData.name,
-        email: formData.email,
-        phone: formattedPhone,
-        date: formData.date,
-        time: formData.time,
-        mode: formData.mode,
-        address: formData.address,
-        message: formData.message
-      };
-      
-      setSubmittedData(submissionData);
+      if (
+        typeof fbq ===
+        "function"
+      ) {
+        fbq("track", "Lead");
+      }
+
       setIsSubmitted(true);
-      setShouldShowPopup(false);
-      
-      // Store in localStorage
-      localStorage.setItem("welcomePopupSubmitted", "true");
-      localStorage.setItem("welcomePopupFormData", JSON.stringify(submissionData));
-      localStorage.setItem("userName", formData.name);
-      localStorage.setItem("userEmail", formData.email);
-      
-    } catch (err) {
-      console.error("Kraya submit error:", err);
-      setSubmitError(err.message || "Something went wrong. Please try again.");
+
+      localStorage.setItem(
+        "popupSubmitted",
+        "true"
+      );
+    } catch (error) {
+      setSubmitError(
+        error.message
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleClose = () => {
-    if (isSubmitted) {
-      onClose();
-    }
-  };
+  if (!isOpen) return null;
 
-  const handleBackToHome = () => {
-    // Just close the popup without refreshing the page
-    onClose();
-  };
-
-  const availableDates = getAvailableDatesDisplay();
-
-  // Don't render anything if popup should not be shown
-  if (!isOpen || (isSubmitted && !shouldShowPopup)) return null;
-
-  // Show submitted success view
-  if (isSubmitted && submittedData) {
-    const displayData = submittedData;
-    
-    return (
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4">
-        <div className="relative w-full max-w-md rounded-[28px] bg-white shadow-2xl p-8 text-center">
-          <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={handleClose}
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-[#f5f2ea] text-[#0b2f1d] hover:bg-[#e8dfd0] transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-
-          <div className="mt-2">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-              <svg
-                className="h-8 w-8 text-green-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            </div>
-
-            <h3 className="font-serif text-2xl font-bold text-[#0b2f1d]">
-              Thank You, {displayData.name?.split(" ")[0] || "User"}! 🎉
-            </h3>
-
-            <p className="mt-2 text-[#6b756c]">
-              Your ₹499 Clarity Session is confirmed!
-            </p>
-
-            <div className="mt-4 rounded-xl bg-[#fbfaf7] p-4 text-left border border-[#e5ddcf]">
-              <p className="text-sm font-semibold text-[#0b2f1d]">
-                Session Details:
-              </p>
-              <div className="mt-2 space-y-1 text-xs text-[#6b756c]">
-                <p>📅 Date: {formatDisplayDate(displayData.date)}</p>
-                <p>⏰ Time: {displayData.time}</p>
-                <p>💻 Mode: {displayData.mode === "online" ? "Online" : "Clinic Visit"}</p>
-              </div>
-            </div>
-
-            <p className="mt-4 text-xs text-[#6b756c]">
-              We'll send you the calendar invite and payment link via WhatsApp/Email within 2 hours.
-            </p>
-
-            <button
-              onClick={handleBackToHome}
-              className="mt-6 w-full rounded-full bg-gradient-to-r from-[#d6a22e] to-[#f5d76e] py-3 text-sm font-semibold text-[#0b2f1d] transition-all duration-300 hover:shadow-lg"
-            >
-              Continue to Website
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Main form view
   return (
-    <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 p-4"
-      onClick={(e) => {
-        if (e.target === e.currentTarget && isSubmitted) {
-          handleClose();
-        }
-      }}
-    >
-      <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-[28px] bg-white shadow-2xl">
-        <div className="px-5 pb-7 sm:px-7">
-          <div className="flex flex-col items-center text-center">
-            <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#d6a22e] to-[#f5d76e]">
-              <Sparkles className="h-7 w-7 text-[#0b2f1d]" />
-            </div>
+    <div className="fixed inset-0 z-[9999] bg-black/60 flex items-center justify-center p-4">
 
-            <h3 className="font-serif text-[28px] sm:text-[36px] leading-tight text-[#0b2f1d]">
-              Get Your ₹499 Clarity Session
-            </h3>
+      <div className="relative w-full max-w-md rounded-[28px] bg-white p-8 shadow-2xl">
 
-            <p className="mt-1 text-[13px] text-[#6b756c]">
-              Limited slots this week (Tue, Thu, Sat only)
-            </p>
-          </div>
+        {/* Close */}
 
-          <div className="mt-4 space-y-2 rounded-2xl bg-[#fbfaf7] p-4 border border-[#e5ddcf]">
-            {[
-              "Structured child assessment",
-              "Neuro-development gap analysis",
-              "Personalized roadmap",
-            ].map((benefit, i) => (
-              <div key={i} className="flex items-center gap-2.5 text-sm">
-                <CheckCircle2 className="h-4 w-4 text-[#d6a22e] flex-shrink-0" />
-                <span className="text-[#193b2b]">{benefit}</span>
-              </div>
-            ))}
-          </div>
+        <button
+          onClick={onClose}
+          className="absolute right-5 top-5 flex h-9 w-9 items-center justify-center rounded-full bg-[#f5f2ea]"
+        >
+          <X className="h-5 w-5" />
+        </button>
 
-          {submitError && (
-            <div className="mt-4 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-3 text-[13px] text-red-700">
-              <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-              <span>{submitError}</span>
-            </div>
-          )}
+        {/* Icon */}
 
-          <form onSubmit={handleSubmit} className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
-                  Full Name *
-                </label>
-
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b756c]" />
-                  <input
-                    name="name"
-                    type="text"
-                    placeholder="Enter your name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className={`w-full rounded-2xl border px-10 py-3 text-sm outline-none transition-all focus:border-[#d6a22e] ${
-                      errors.name
-                        ? "border-red-400 bg-red-50"
-                        : "border-[#e5ddcf] bg-[#fbfaf7]"
-                    }`}
-                  />
-                </div>
-
-                {errors.name && (
-                  <p className="mt-1 text-[11px] text-red-500">
-                    {errors.name}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
-                  Email Address *
-                </label>
-
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b756c]" />
-                  <input
-                    name="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className={`w-full rounded-2xl border px-10 py-3 text-sm outline-none transition-all focus:border-[#d6a22e] ${
-                      errors.email
-                        ? "border-red-400 bg-red-50"
-                        : "border-[#e5ddcf] bg-[#fbfaf7]"
-                    }`}
-                  />
-                </div>
-
-                {errors.email && (
-                  <p className="mt-1 text-[11px] text-red-500">
-                    {errors.email}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
-                  Phone Number *
-                </label>
-
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b756c]" />
-                  <input
-                    name="phone"
-                    type="tel"
-                    maxLength={10}
-                    placeholder="Enter your phone number"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    required
-                    className={`w-full rounded-2xl border px-10 py-3 text-sm outline-none transition-all focus:border-[#d6a22e] ${
-                      errors.phone
-                        ? "border-red-400 bg-red-50"
-                        : "border-[#e5ddcf] bg-[#fbfaf7]"
-                    }`}
-                  />
-                </div>
-
-                {errors.phone && (
-                  <p className="mt-1 text-[11px] text-red-500">
-                    {errors.phone}
-                  </p>
-                )}
-              </div>
-
-              {/* Date Field with Custom Calendar */}
-              <div className="relative calendar-container">
-                <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
-                  Select Date (Tue, Thu, Sat only) *
-                </label>
-
-                <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b756c] z-10" />
-                  
-                  <input
-                    type="text"
-                    placeholder="Select a date"
-                    value={formData.date ? formatDate(new Date(formData.date)) : ""}
-                    onFocus={() => setShowCalendar(true)}
-                    readOnly
-                    className={`w-full rounded-2xl border px-10 py-3 text-sm outline-none transition-all focus:border-[#d6a22e] cursor-pointer ${
-                      errors.date
-                        ? "border-red-400 bg-red-50"
-                        : "border-[#e5ddcf] bg-[#fbfaf7]"
-                    }`}
-                  />
-                </div>
-
-                {/* Custom Calendar Dropdown */}
-                {showCalendar && (
-                  <div className="absolute z-20 mt-2 w-full bg-white rounded-2xl border border-[#e5ddcf] shadow-xl p-4" style={{ minWidth: '280px' }}>
-                    <div className="flex items-center justify-between mb-4">
-                      <button
-                        type="button"
-                        onClick={prevMonth}
-                        className="p-1 hover:bg-[#f5f2ea] rounded-full transition-colors"
-                      >
-                        <ChevronLeft className="w-5 h-5 text-[#0b2f1d]" />
-                      </button>
-                      
-                      <span className="font-semibold text-[#0b2f1d]">
-                        {currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}
-                      </span>
-                      
-                      <button
-                        type="button"
-                        onClick={nextMonth}
-                        className="p-1 hover:bg-[#f5f2ea] rounded-full transition-colors"
-                      >
-                        <ChevronRight className="w-5 h-5 text-[#0b2f1d]" />
-                      </button>
-                    </div>
-
-                    <div className="grid grid-cols-7 gap-1 mb-2">
-                      {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(day => (
-                        <div key={day} className="text-center text-xs font-medium text-[#6b756c] py-2">
-                          {day}
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="grid grid-cols-7 gap-1">
-                      {getCalendarDays().map((date, index) => {
-                        if (!date) {
-                          return <div key={`empty-${index}`} className="p-2"></div>;
-                        }
-                        
-                        const allowed = isDateAllowed(date);
-                        const selected = isSelected(date);
-                        const today = isToday(date);
-                        
-                        return (
-                          <button
-                            key={date.toISOString()}
-                            type="button"
-                            onClick={() => handleDateSelect(date)}
-                            disabled={!allowed}
-                            className={`
-                              p-2 text-center rounded-xl transition-all text-sm
-                              ${!allowed && 'opacity-30 cursor-not-allowed bg-gray-100 line-through'}
-                              ${allowed && !selected && 'hover:bg-[#d6a22e]/20 cursor-pointer bg-[#d6a22e]/5'}
-                              ${selected && 'bg-[#d6a22e] text-white font-semibold'}
-                              ${today && !selected && allowed && 'border border-[#d6a22e]'}
-                            `}
-                          >
-                            {date.getDate()}
-                          </button>
-                        );
-                      })}
-                    </div>
-
-                    <div className="mt-4 pt-3 border-t border-[#e5ddcf] flex items-center justify-center gap-4 text-xs">
-                      <div className="flex items-center gap-1">
-                        <div className="w-3 h-3 rounded-full bg-[#d6a22e]"></div>
-                        <span className="text-[#6b756c]">Available (Tue, Thu, Sat)</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <div className="w-3 h-3 rounded-full bg-gray-200"></div>
-                        <span className="text-[#6b756c]">Not Available</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {availableDates.length > 0 && !formData.date && (
-                  <p className="mt-2 text-[11px] text-[#d6a22e]">
-                    Next available: {availableDates.slice(0, 3).map(d => formatDate(d)).join(", ")}
-                  </p>
-                )}
-
-                {errors.date && (
-                  <p className="mt-1 text-[11px] text-red-500">{errors.date}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
-                  City / Location
-                </label>
-
-                <input
-                  name="address"
-                  type="text"
-                  placeholder="Enter your city"
-                  value={formData.address}
-                  onChange={handleChange}
-                  className="w-full rounded-2xl border border-[#e5ddcf] bg-[#fbfaf7] px-4 py-3 text-sm outline-none transition-all focus:border-[#d6a22e]"
-                />
-              </div>
-
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
-                  Child's Age & Concern
-                </label>
-
-                <input
-                  name="message"
-                  type="text"
-                  placeholder="e.g., 4 years, speech delay"
-                  value={formData.message}
-                  onChange={handleChange}
-                  className="w-full rounded-2xl border border-[#e5ddcf] bg-[#fbfaf7] px-4 py-3 text-sm outline-none transition-all focus:border-[#d6a22e]"
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
-                  Consultation Mode *
-                </label>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => handleModeSelect("online")}
-                    className={`rounded-xl border-2 p-4 text-center transition-all ${
-                      formData.mode === "online"
-                        ? "border-[#d6a22e] bg-[#d6a22e]/10 text-[#06351f]"
-                        : "border-[#e5ddcf] bg-[#fbfaf7] text-[#5f665f] hover:border-[#d6a22e]"
-                    }`}
-                  >
-                    <Video className="w-6 h-6 mx-auto mb-2" />
-                    <span className="font-semibold">Online</span>
-                    <p className="text-xs mt-1">Video Consultation</p>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleModeSelect("clinic")}
-                    className={`rounded-xl border-2 p-4 text-center transition-all ${
-                      formData.mode === "clinic"
-                        ? "border-[#d6a22e] bg-[#d6a22e]/10 text-[#06351f]"
-                        : "border-[#e5ddcf] bg-[#fbfaf7] text-[#5f665f] hover:border-[#d6a22e]"
-                    }`}
-                  >
-                    <Building className="w-6 h-6 mx-auto mb-2" />
-                    <span className="font-semibold">Clinic</span>
-                    <p className="text-xs mt-1">In-Person Visit</p>
-                  </button>
-                </div>
-
-                {errors.mode && (
-                  <p className="mt-1 text-[11px] text-red-500">
-                    {errors.mode}
-                  </p>
-                )}
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
-                  Select Time *
-                </label>
-
-                <div className="relative">
-                  <ClockIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b756c]" />
-                  <select
-                    name="time"
-                    value={formData.time}
-                    onChange={handleChange}
-                    required
-                    className={`w-full rounded-2xl border px-10 py-3 text-sm outline-none appearance-none transition-all focus:border-[#d6a22e] ${
-                      errors.time
-                        ? "border-red-400 bg-red-50"
-                        : "border-[#e5ddcf] bg-[#fbfaf7]"
-                    }`}
-                  >
-                    <option value="">Select Time Slot</option>
-                    {timeSlots.map((slot) => (
-                      <option key={slot} value={slot}>
-                        {slot}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {errors.time && (
-                  <p className="mt-1 text-[11px] text-red-500">
-                    {errors.time}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="mt-7 w-full rounded-full bg-gradient-to-r from-[#d6a22e] to-[#f5d76e] py-4 text-[15px] font-semibold text-[#0b2f1d] transition-all duration-300 hover:shadow-lg disabled:opacity-70"
-            >
-              {isSubmitting ? (
-                <div className="flex items-center justify-center gap-2">
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#0b2f1d] border-t-transparent"></div>
-                  Processing...
-                </div>
-              ) : (
-                "Book ₹499 Clarity Session →"
-              )}
-            </button>
-
-            <p className="mt-4 text-center text-[10px] text-[#6b756c]">
-              🔒 Secure & Confidential • No spam • ₹499 only
-            </p>
-          </form>
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#d6a22e] to-[#f5d76e]">
+          <Sparkles className="h-7 w-7 text-[#0b2f1d]" />
         </div>
+
+        {/* Heading */}
+
+        <h2 className="mt-5 text-center font-serif text-[30px] font-semibold text-[#0b2f1d]">
+          Get Started Today
+        </h2>
+
+        <p className="mt-2 text-center text-[13px] text-[#6b756c]">
+          Fill your details to continue
+        </p>
+
+        {submitError && (
+          <div className="mt-5 flex gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-red-600">
+            <AlertCircle className="w-4 h-4 mt-[2px]" />
+            {submitError}
+          </div>
+        )}
+
+        {isSubmitted && (
+          <div className="mt-5 flex gap-2 rounded-xl border border-green-200 bg-green-50 p-3 text-green-700">
+            <CheckCircle className="w-4 h-4 mt-[2px]" />
+            Submitted Successfully
+          </div>
+        )}
+
+        <form
+          onSubmit={handleSubmit}
+          className="mt-6 space-y-5"
+        >
+          {/* Name */}
+
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
+              Full Name
+            </label>
+
+            <div className="relative">
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b756c]" />
+
+              <input
+                type="text"
+                name="name"
+                value={
+                  formData.name
+                }
+                onChange={
+                  handleChange
+                }
+                placeholder="Enter name"
+                className="w-full rounded-2xl border border-[#e5ddcf] bg-[#fbfaf7] px-10 py-3 text-sm outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Email */}
+
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
+              Email
+            </label>
+
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b756c]" />
+
+              <input
+                type="email"
+                name="email"
+                value={
+                  formData.email
+                }
+                onChange={
+                  handleChange
+                }
+                placeholder="Enter email"
+                className="w-full rounded-2xl border border-[#e5ddcf] bg-[#fbfaf7] px-10 py-3 text-sm outline-none"
+              />
+            </div>
+          </div>
+
+          {/* Phone */}
+
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
+              Phone Number
+            </label>
+
+            <div className="relative">
+              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#6b756c]" />
+
+              <input
+                type="tel"
+                name="phone"
+                maxLength={10}
+                value={
+                  formData.phone
+                }
+                onChange={
+                  handleChange
+                }
+                placeholder="Enter phone number"
+                className="w-full rounded-2xl border border-[#e5ddcf] bg-[#fbfaf7] px-10 py-3 text-sm outline-none"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={
+              isSubmitting
+            }
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#d6a22e] to-[#f5d76e] py-4 text-[14px] font-semibold text-[#0b2f1d]"
+          >
+            <Send className="w-4 h-4" />
+
+            {isSubmitting
+              ? "Submitting..."
+              : "Submit →"}
+          </button>
+        </form>
       </div>
     </div>
   );
