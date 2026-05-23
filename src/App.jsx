@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
   Brain, CheckCircle2, Sparkles, Calendar, ShieldCheck, Compass, User, Mail, Phone,
   MapPin, PlayCircle, Quote, ChevronDown, MessageCircle, X, Star, Users, Clock, ChevronLeft, ChevronRight,
-  AlertCircle, Video,Send,CheckCircl ,Building, Clock as ClockIcon
+  AlertCircle, Video,Send,CheckCircle,Building, Clock as ClockIcon
 } from "lucide-react";
 
 // Import images (update paths as needed)
