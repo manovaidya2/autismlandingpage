@@ -1934,6 +1934,14 @@ function WelcomePopup({ isOpen, onClose }) {
         "popupSubmitted",
         "true"
       );
+
+      // Redirect to home after successful submission
+      setTimeout(() => {
+        onClose(); // Close popup
+        document.body.style.overflow = "unset";
+        window.location.href = "/"; // Redirect to home page
+      }, 1500);
+
     } catch (error) {
       setSubmitError(
         error.message
@@ -1943,21 +1951,49 @@ function WelcomePopup({ isOpen, onClose }) {
     }
   };
 
+  // Function to handle close - prevents closing without submission
+  const handleCloseAttempt = () => {
+    // Don't allow closing if form is not submitted
+    if (!isSubmitted) {
+      alert("Please fill and submit the form to continue");
+      return;
+    }
+    // If already submitted, allow closing
+    onClose();
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[9999] bg-black/60 flex items-center justify-center p-4">
+      {/* Backdrop click - prevents closing without submission */}
+      <div 
+        className="absolute inset-0" 
+        onClick={handleCloseAttempt}
+      ></div>
 
       <div className="relative w-full max-w-md rounded-[28px] bg-white p-8 shadow-2xl">
 
-        {/* Close */}
-
-        <button
+        {/* Close button - removed to prevent closing without submission */}
+        {/* <button
           onClick={onClose}
           className="absolute right-5 top-5 flex h-9 w-9 items-center justify-center rounded-full bg-[#f5f2ea]"
         >
           <X className="h-5 w-5" />
-        </button>
+        </button> */}
+
+        {/* Optional: Show close button only after submission */}
+        {isSubmitted && (
+          <button
+            onClick={() => {
+              onClose();
+              window.location.href = "/";
+            }}
+            className="absolute right-5 top-5 flex h-9 w-9 items-center justify-center rounded-full bg-[#f5f2ea] hover:bg-[#e5ddcf] transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        )}
 
         {/* Icon */}
 
@@ -1972,7 +2008,7 @@ function WelcomePopup({ isOpen, onClose }) {
         </h2>
 
         <p className="mt-2 text-center text-[13px] text-[#6b756c]">
-          Fill your details to continue
+          {isSubmitted ? "Redirecting to home page..." : "Fill your details to continue"}
         </p>
 
         {submitError && (
@@ -1985,7 +2021,7 @@ function WelcomePopup({ isOpen, onClose }) {
         {isSubmitted && (
           <div className="mt-5 flex gap-2 rounded-xl border border-green-200 bg-green-50 p-3 text-green-700">
             <CheckCircle className="w-4 h-4 mt-[2px]" />
-            Submitted Successfully
+            Submitted Successfully! Redirecting...
           </div>
         )}
 
@@ -1997,7 +2033,7 @@ function WelcomePopup({ isOpen, onClose }) {
 
           <div>
             <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
-              Full Name
+              Full Name <span className="text-red-500">*</span>
             </label>
 
             <div className="relative">
@@ -2013,16 +2049,20 @@ function WelcomePopup({ isOpen, onClose }) {
                   handleChange
                 }
                 placeholder="Enter name"
-                className="w-full rounded-2xl border border-[#e5ddcf] bg-[#fbfaf7] px-10 py-3 text-sm outline-none"
+                disabled={isSubmitting || isSubmitted}
+                className="w-full rounded-2xl border border-[#e5ddcf] bg-[#fbfaf7] px-10 py-3 text-sm outline-none disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
+            {errors.name && (
+              <p className="text-red-500 text-xs mt-1 ml-2">{errors.name}</p>
+            )}
           </div>
 
           {/* Email */}
 
           <div>
             <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
-              Email
+              Email <span className="text-red-500">*</span>
             </label>
 
             <div className="relative">
@@ -2038,16 +2078,20 @@ function WelcomePopup({ isOpen, onClose }) {
                   handleChange
                 }
                 placeholder="Enter email"
-                className="w-full rounded-2xl border border-[#e5ddcf] bg-[#fbfaf7] px-10 py-3 text-sm outline-none"
+                disabled={isSubmitting || isSubmitted}
+                className="w-full rounded-2xl border border-[#e5ddcf] bg-[#fbfaf7] px-10 py-3 text-sm outline-none disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1 ml-2">{errors.email}</p>
+            )}
           </div>
 
           {/* Phone */}
 
           <div>
             <label className="mb-2 block text-sm font-semibold text-[#193b2b]">
-              Phone Number
+              Phone Number <span className="text-red-500">*</span>
             </label>
 
             <div className="relative">
@@ -2064,25 +2108,36 @@ function WelcomePopup({ isOpen, onClose }) {
                   handleChange
                 }
                 placeholder="Enter phone number"
-                className="w-full rounded-2xl border border-[#e5ddcf] bg-[#fbfaf7] px-10 py-3 text-sm outline-none"
+                disabled={isSubmitting || isSubmitted}
+                className="w-full rounded-2xl border border-[#e5ddcf] bg-[#fbfaf7] px-10 py-3 text-sm outline-none disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
+            {errors.phone && (
+              <p className="text-red-500 text-xs mt-1 ml-2">{errors.phone}</p>
+            )}
           </div>
 
           <button
             type="submit"
-            disabled={
-              isSubmitting
-            }
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#d6a22e] to-[#f5d76e] py-4 text-[14px] font-semibold text-[#0b2f1d]"
+            disabled={isSubmitting || isSubmitted}
+            className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#d6a22e] to-[#f5d76e] py-4 text-[14px] font-semibold text-[#0b2f1d] hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Send className="w-4 h-4" />
 
             {isSubmitting
               ? "Submitting..."
+              : isSubmitted
+              ? "Redirecting..."
               : "Submit →"}
           </button>
         </form>
+
+        {/* Warning message */}
+        {!isSubmitted && (
+          <p className="text-center text-xs text-gray-400 mt-4">
+            Please complete the form to continue
+          </p>
+        )}
       </div>
     </div>
   );
