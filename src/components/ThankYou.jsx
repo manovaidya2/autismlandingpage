@@ -28,7 +28,7 @@ export default function ThankYou() {
       });
     }
 
-    // Facebook Pixel PageView
+    // Facebook Pixel PageView with New Pixel ID
     if (window.fbq) {
       window.fbq("track", "PageView");
 
@@ -133,7 +133,7 @@ export default function ThankYou() {
           `}
         </script>
 
-        {/* Facebook Pixel */}
+        {/* Facebook Pixel - New Code */}
         <script>
           {`
             !function(f,b,e,v,n,t,s)
@@ -165,20 +165,20 @@ export default function ThankYou() {
               'https://connect.facebook.net/en_US/fbevents.js'
             );
 
-            fbq('init', '744237392035480');
+            fbq('init', '26190793347260193');
 
             fbq('track', 'PageView');
           `}
         </script>
 
-        {/* Noscript */}
+        {/* Noscript - New Pixel ID */}
         <noscript>
           {`
             <img
               height="1"
               width="1"
               style="display:none"
-              src="https://www.facebook.com/tr?id=744237392035480&ev=PageView&noscript=1"
+              src="https://www.facebook.com/tr?id=26190793347260193&ev=PageView&noscript=1"
             />
           `}
         </noscript>
