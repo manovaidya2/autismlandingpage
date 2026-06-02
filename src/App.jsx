@@ -1895,7 +1895,7 @@ function WelcomePopup({ isOpen, onClose }) {
         email:
           formData.email.trim(),
 
-        stage: "New Lead",
+        stage: "Direct Booking Autism",
         pipeline: "Leads",
       };
 

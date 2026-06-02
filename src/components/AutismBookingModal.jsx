@@ -257,8 +257,19 @@ export default function AutismBookingModal({ open, setOpen }) {
     setIsSubmitting(true);
     setSubmitError("");
 
+    // Prepare notes with booking details
+    const bookingNotes = `Autism Assessment Booking\nDate: ${formData.date}\nTime: ${formData.time}\nMode: ${formData.mode === "online" ? "Online (Video Consultation)" : "Clinic (In-Person Visit)"}`;
+
     try {
-      const response = await axios.post("/autism-bookings", formData);
+      // Send to Kraya API endpoint
+      const response = await axios.post("/autism-kraya-lead", {
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        notes: bookingNotes,
+        stage: "Slot Booked Direct Booking Autism",
+      
+      });
 
       if (response.status === 200 || response.status === 201) {
         // Store form data in localStorage
@@ -645,7 +656,3 @@ export default function AutismBookingModal({ open, setOpen }) {
     </div>
   );
 }
-
-
-
-
